@@ -1,31 +1,40 @@
-document.getElementById("form").addEventListener("submit", async function(e){
+document.getElementById("form")
+.addEventListener("submit", async (e)=>{
 
-    e.preventDefault();
+e.preventDefault();
 
-    const form = e.target;
+const f=e.target;
 
-    const data = new FormData(form);
+const data={
+nom:f.nom.value,
+prenom:f.prenom.value,
+sexe:f.sexe.value,
+naissance:f.naissance.value,
+lieu:f.lieu.value,
+adresse:f.adresse.value,
+telephone:f.telephone.value,
+email:f.email.value,
+parent:f.parent.value,
+tel_parent:f.tel_parent.value,
+option:f.option.value,
+photo_piece:""
+};
 
-    const inscription = {
-        nom: data.get("nom"),
-        prenom: data.get("prenom"),
-        sexe: data.get("sexe"),
-        naissance: data.get("naissance"),
-        lieu: data.get("lieu"),
-        adresse: data.get("adresse"),
-        telephone: data.get("telephone"),
-        email: data.get("email"),
-        parent: data.get("parent"),
-        tel_parent: data.get("tel_parent"),
-        option: data.get("option")
-    };
+const r=await fetch("/api/inscription",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+});
 
-    alert(
-        "Merci " +
-        inscription.prenom +
-        " ! Votre inscription a été enregistrée."
-    );
+const rep=await r.json();
 
-    console.log(inscription);
+alert(
+"Inscription réussie !\nNuméro : "
++rep.numero
+);
+
+f.reset();
 
 });
