@@ -1,157 +1,28 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: 'Poppins', Arial, sans-serif;
-}
-
-body{
-    background:#f2f2f2;
-}
-
-.hero{
-    background:linear-gradient(135deg,#7a0000,#a50000);
-    color:white;
-    text-align:center;
-    padding:35px 20px;
-}
-
-.logo{
-    width:140px;
-    height:auto;
-    margin-bottom:15px;
-}
-
-.hero h1{
-    font-size:30px;
-    margin-bottom:8px;
-}
-
-.hero p{
-    color:#FFD54F;
-    font-weight:bold;
-    font-size:18px;
-}
-
-.container{
-    width:92%;
-    max-width:900px;
-    margin:30px auto;
+table{
+    border-collapse:collapse;
+    margin-top:20px;
     background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
 
-.container h2{
+th{
+    background:#8B0000;
+    color:white;
+}
+
+td,th{
     text-align:center;
-    color:#8B0000;
-    margin-bottom:25px;
+    padding:10px;
 }
 
-.container h3{
-    margin:25px 0 12px;
-    color:#8B0000;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:18px;
-}
-
-.inputBox{
-    display:flex;
-    flex-direction:column;
-}
-
-.inputBox label{
-    margin-bottom:6px;
-    font-weight:600;
-    color:#333;
-}
-
-input,
-select,
-textarea{
-    padding:12px;
-    border:1px solid #d6d6d6;
-    border-radius:8px;
-    font-size:15px;
-    outline:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    border-color:#8B0000;
-}
-
-.options{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.options label{
-    border:1px solid #ddd;
-    border-radius:10px;
-    padding:14px;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.options label:hover{
-    border-color:#8B0000;
-    background:#fff8f8;
-}
-
-.options span{
-    float:right;
-    color:#8B0000;
-    font-weight:bold;
-}
-
-.options small{
-    display:block;
-    margin-top:6px;
-    color:#666;
-}
-
-.btn{
-    width:100%;
-    margin-top:30px;
-    padding:15px;
+button{
     background:#8B0000;
     color:white;
     border:none;
-    border-radius:10px;
-    font-size:18px;
-    font-weight:bold;
+    padding:8px 14px;
+    border-radius:6px;
     cursor:pointer;
 }
 
-.btn:hover{
-    background:#a50000;
-}
-
-.success{
-    background:#d4edda;
-    color:#155724;
-    padding:15px;
-    border-radius:8px;
-    margin-top:20px;
-    display:none;
-}
-
-@media(max-width:700px){
-
-.grid{
-    grid-template-columns:1fr;
-}
-
-.hero h1{
-    font-size:24px;
-}
-
+button:hover{
+    background:#A50000;
 }
