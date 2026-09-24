@@ -83,9 +83,9 @@ async function pdf(jsonSafe) {
   // ============================================================
   // ZONE PHOTO (réservée à droite, de Y=76 jusqu'en bas)
   // ============================================================
-  const PHOTO_X = 148;   // bord gauche de la zone photo
-  const PHOTO_W = 48;    // largeur fixe
-  const PHOTO_Y = 76;    // aligné sur la première ligne "Nom :"
+  const PHOTO_X = 148;
+  const PHOTO_W = 48;
+  const PHOTO_Y = 76;
 
   // ---------- SECTION : INFOS PERSONNELLES (côté gauche) ----------
   let y = 78;
@@ -94,7 +94,7 @@ async function pdf(jsonSafe) {
   doc.setFontSize(12);
   doc.text("INFORMATIONS PERSONNELLES", 20, y);
   doc.setDrawColor(...ROUGE);
-  doc.line(20, y + 2, 140, y + 2);  // ligne limitée à gauche (photo à droite)
+  doc.line(20, y + 2, 140, y + 2);
   y += 12;
 
   doc.setTextColor(0, 0, 0);
@@ -127,7 +127,7 @@ async function pdf(jsonSafe) {
   // ============================================================
   // INSERTION DE LA PHOTO dans la zone réservée à droite
   // ============================================================
-  const PHOTO_ZONE_H = Math.max(y - PHOTO_Y - 4, 60); // hauteur dispo
+  const PHOTO_ZONE_H = Math.max(y - PHOTO_Y - 4, 60);
 
   if (e.photo_piece && typeof e.photo_piece === "string" && e.photo_piece.startsWith("data:image")) {
     try {
@@ -137,7 +137,6 @@ async function pdf(jsonSafe) {
       let w = PHOTO_W;
       let h = PHOTO_ZONE_H;
 
-      // Ajustement du ratio pour ne pas déformer
       if (dims && dims.w && dims.h) {
         const ratio = dims.w / dims.h;
         if (PHOTO_W / PHOTO_ZONE_H > ratio) {
@@ -149,10 +148,8 @@ async function pdf(jsonSafe) {
         }
       }
 
-      // Centrer la photo dans la zone réservée
       const photoX = PHOTO_X + (PHOTO_W - w) / 2;
 
-      // Cadre bordeaux
       doc.setDrawColor(...ROUGE);
       doc.setLineWidth(0.6);
       doc.rect(photoX - 1.5, PHOTO_Y - 1.5, w + 3, h + 3);
@@ -163,7 +160,6 @@ async function pdf(jsonSafe) {
       console.warn("Photo non ajoutée :", err);
     }
   } else {
-    // Pas de photo → cadre vide
     doc.setDrawColor(180);
     doc.setLineWidth(0.3);
     doc.rect(PHOTO_X, PHOTO_Y, PHOTO_W, PHOTO_ZONE_H);
