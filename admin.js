@@ -1,8 +1,12 @@
 // ================================
-// ADMINISTRATION MEH
-// Liste + PDF complet avec photo en haut à droite
+// ADMINISTRATION MEH — CRUD complet
 // ================================
 
+let toutesLesInscriptions = [];
+
+// ================================
+// CHARGEMENT (READ)
+// ================================
 async function charger() {
   const tbody = document.querySelector("tbody");
   tbody.innerHTML = `<tr><td colspan="7">Chargement...</td></tr>`;
@@ -12,36 +16,167 @@ async function charger() {
     if (!r.ok) throw new Error("Erreur " + r.status);
 
     const data = await r.json();
-
-    if (!Array.isArray(data) || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7">Aucune inscription pour le moment.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = "";
-
-    data.forEach((e, i) => {
-      const tr = document.createElement("tr");
-      const jsonSafe = encodeURIComponent(JSON.stringify(e));
-
-      tr.innerHTML = `
-        <td>${i + 1}</td>
-        <td>${e.numero || ""}</td>
-        <td>${e.nom || ""}</td>
-        <td>${e.prenom || ""}</td>
-        <td>${e.option_formation || ""}</td>
-        <td>${e.telephone || ""}</td>
-        <td>
-          <button onclick="pdf('${jsonSafe}')">PDF</button>
-        </td>
-      `;
-
-      tbody.appendChild(tr);
-    });
+    toutesLesInscriptions = Array.isArray(data) ? data : [];
+    afficher(toutesLesInscriptions);
 
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="7" style="color:red">Erreur : ${err.message}</td></tr>`;
     console.error(err);
+  }
+}
+
+// ================================
+// AFFICHAGE DU TABLEAU
+// ================================
+function afficher(liste) {
+  const tbody = document.querySelector("tbody");
+
+  if (liste.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7">Aucune inscription.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = "";
+
+  liste.forEach((e, i) => {
+    const tr = document.createElement("tr");
+    const jsonSafe = encodeURIComponent(JSON.stringify(e));
+
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${e.numero || ""}</td>
+      <td>${e.nom || ""}</td>
+      <td>${e.prenom || ""}</td>
+      <td>${e.option_formation || ""}</td>
+      <td>${e.telephone || ""}</td>
+      <td>
+        <button onclick="pdf('${jsonSafe}')" title="Télécharger le PDF">📄</button>
+        <button onclick="ouvrirModal('${jsonSafe}')" title="Modifier" style="background:#1976d2">✏️</button>
+        <button onclick="supprimer(${e.id}, '${(e.nom || "")} ${(e.prenom || "")}')" title="Supprimer" style="background:#c62828">🗑️</button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+// ================================
+// BARRE DE RECHERCHE
+// ================================
+document.addEventListener("DOMContentLoaded", () => {
+  const recherche = document.getElementById("recherche");
+  if (recherche) {
+    recherche.addEventListener("input", (ev) => {
+      const q = ev.target.value.toLowerCase().trim();
+      if (!q) { afficher(toutesLesInscriptions); return; }
+
+      const filtre = toutesLesInscriptions.filter(e => {
+        return (
+          (e.nom || "").toLowerCase().includes(q) ||
+          (e.prenom || "").toLowerCase().includes(q) ||
+          (e.numero || "").toLowerCase().includes(q) ||
+          (e.telephone || "").toLowerCase().includes(q) ||
+          (e.option_formation || "").toLowerCase().includes(q)
+        );
+      });
+      afficher(filtre);
+    });
+  }
+});
+
+// ================================
+// MODAL : OUVRIR
+// ================================
+function ouvrirModal(jsonSafe) {
+  const e = JSON.parse(decodeURIComponent(jsonSafe));
+
+  document.getElementById("edit-id").value = e.id || "";
+  document.getElementById("edit-nom").value = e.nom || "";
+  document.getElementById("edit-prenom").value = e.prenom || "";
+  document.getElementById("edit-sexe").value = e.sexe || "";
+  document.getElementById("edit-naissance").value = e.naissance || "";
+  document.getElementById("edit-lieu").value = e.lieu || "";
+  document.getElementById("edit-adresse").value = e.adresse || "";
+  document.getElementById("edit-telephone").value = e.telephone || "";
+  document.getElementById("edit-email").value = e.email || "";
+  document.getElementById("edit-option").value = e.option_formation || "";
+  document.getElementById("edit-parent").value = e.parent || "";
+  document.getElementById("edit-tel-parent").value = e.tel_parent || "";
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+function fermerModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+window.addEventListener("click", (ev) => {
+  const modal = document.getElementById("modal");
+  if (ev.target === modal) fermerModal();
+});
+
+// ================================
+// SAUVEGARDER MODIFICATION (UPDATE)
+// ================================
+async function sauvegarderModif(ev) {
+  ev.preventDefault();
+
+  const data = {
+    id: document.getElementById("edit-id").value,
+    nom: document.getElementById("edit-nom").value,
+    prenom: document.getElementById("edit-prenom").value,
+    sexe: document.getElementById("edit-sexe").value,
+    naissance: document.getElementById("edit-naissance").value,
+    lieu: document.getElementById("edit-lieu").value,
+    adresse: document.getElementById("edit-adresse").value,
+    telephone: document.getElementById("edit-telephone").value,
+    email: document.getElementById("edit-email").value,
+    option_formation: document.getElementById("edit-option").value,
+    parent: document.getElementById("edit-parent").value,
+    tel_parent: document.getElementById("edit-tel-parent").value
+  };
+
+  try {
+    const r = await fetch("/api/modifier", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const res = await r.json();
+    if (!r.ok) throw new Error(res.error || "Erreur");
+
+    fermerModal();
+    charger();
+    alert("✅ Modification enregistrée !");
+
+  } catch (err) {
+    alert("❌ Erreur : " + err.message);
+  }
+}
+
+// ================================
+// SUPPRIMER (DELETE)
+// ================================
+async function supprimer(id, nom) {
+  const ok = confirm(`⚠️ Supprimer définitivement l'inscription de "${nom}" ?\n\nCette action est irréversible.`);
+  if (!ok) return;
+
+  try {
+    const r = await fetch("/api/supprimer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id })
+    });
+
+    const res = await r.json();
+    if (!r.ok) throw new Error(res.error || "Erreur");
+
+    charger();
+    alert("✅ Inscription supprimée !");
+
+  } catch (err) {
+    alert("❌ Erreur : " + err.message);
   }
 }
 
@@ -55,7 +190,6 @@ async function pdf(jsonSafe) {
 
   const ROUGE = [139, 0, 0];
 
-  // ---------- EN-TÊTE ----------
   doc.setFillColor(...ROUGE);
   doc.rect(0, 0, 210, 30, "F");
   doc.setTextColor(255, 255, 255);
@@ -66,13 +200,11 @@ async function pdf(jsonSafe) {
   doc.setFontSize(11);
   doc.text("& SERVICE TRAITEUR", 105, 21, { align: "center" });
 
-  // ---------- TITRE ----------
   doc.setTextColor(0, 0, 0);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(15);
   doc.text("FICHE D'INSCRIPTION", 105, 45, { align: "center" });
 
-  // ---------- NUMÉRO ----------
   doc.setDrawColor(...ROUGE);
   doc.setLineWidth(0.6);
   doc.rect(55, 52, 100, 12);
@@ -80,14 +212,10 @@ async function pdf(jsonSafe) {
   doc.setFontSize(12);
   doc.text("N° " + (e.numero || ""), 105, 60, { align: "center" });
 
-  // ============================================================
-  // ZONE PHOTO (réservée à droite, de Y=76 jusqu'en bas)
-  // ============================================================
   const PHOTO_X = 148;
   const PHOTO_W = 48;
   const PHOTO_Y = 76;
 
-  // ---------- SECTION : INFOS PERSONNELLES (côté gauche) ----------
   let y = 78;
   doc.setTextColor(...ROUGE);
   doc.setFont("helvetica", "bold");
@@ -124,9 +252,6 @@ async function pdf(jsonSafe) {
   ligne("Téléphone", e.telephone);
   ligne("Email", e.email, 60);
 
-  // ============================================================
-  // INSERTION DE LA PHOTO dans la zone réservée à droite
-  // ============================================================
   const PHOTO_ZONE_H = Math.max(y - PHOTO_Y - 4, 60);
 
   if (e.photo_piece && typeof e.photo_piece === "string" && e.photo_piece.startsWith("data:image")) {
@@ -169,7 +294,6 @@ async function pdf(jsonSafe) {
     doc.text("non fournie", PHOTO_X + PHOTO_W / 2, PHOTO_Y + PHOTO_ZONE_H / 2 + 3, { align: "center" });
   }
 
-  // ---------- SECTION : FORMATION ----------
   y += 4;
   doc.setTextColor(...ROUGE);
   doc.setFont("helvetica", "bold");
@@ -186,7 +310,6 @@ async function pdf(jsonSafe) {
   doc.text(formation, 20, y);
   y += formation.length * 6 + 6;
 
-  // ---------- SECTION : PARENT / TUTEUR ----------
   doc.setTextColor(...ROUGE);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
@@ -199,7 +322,6 @@ async function pdf(jsonSafe) {
   ligne("Nom", e.parent);
   ligne("Téléphone", e.tel_parent);
 
-  // ---------- PIED DE PAGE ----------
   doc.setFillColor(...ROUGE);
   doc.rect(0, 275, 210, 22, "F");
   doc.setTextColor(255, 255, 255);
@@ -214,13 +336,9 @@ async function pdf(jsonSafe) {
     : new Date().toLocaleDateString("fr-FR");
   doc.text("Inscrit le " + dateInsc, 105, 291, { align: "center" });
 
-  // ---------- SAUVEGARDE ----------
   doc.save((e.numero || "fiche") + ".pdf");
 }
 
-// ================================
-// Utilitaire : dimensions d'une image base64
-// ================================
 function getImageDimensions(dataUrl) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -230,5 +348,4 @@ function getImageDimensions(dataUrl) {
   });
 }
 
-// Lancement
 charger();
