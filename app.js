@@ -1,40 +1,60 @@
-document.getElementById("form")
-.addEventListener("submit", async (e)=>{
+const form = document.getElementById("form");
 
-e.preventDefault();
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-const f=e.target;
+    const photo = document.getElementById("photo").files[0];
 
-const data={
-nom:f.nom.value,
-prenom:f.prenom.value,
-sexe:f.sexe.value,
-naissance:f.naissance.value,
-lieu:f.lieu.value,
-adresse:f.adresse.value,
-telephone:f.telephone.value,
-email:f.email.value,
-parent:f.parent.value,
-tel_parent:f.tel_parent.value,
-option:f.option.value,
-photo_piece:""
-};
+    if (!photo) {
+        alert("Veuillez ajouter la photo de votre pièce d'identité.");
+        return;
+    }
 
-const r=await fetch("/api/inscription",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
-});
+    const reader = new FileReader();
 
-const rep=await r.json();
+    reader.onload = async function () {
 
-alert(
-"Inscription réussie !\nNuméro : "
-+rep.numero
-);
+        const data = {
+            nom: form.nom.value,
+            prenom: form.prenom.value,
+            sexe: form.sexe.value,
+            naissance: form.naissance.value,
+            lieu: form.lieu.value,
+            adresse: form.adresse.value,
+            telephone: form.telephone.value,
+            email: form.email.value,
+            parent: form.parent.value,
+            tel_parent: form.tel_parent.value,
+            option: form.option.value,
+            photo_piece: reader.result
+        };
 
-f.reset();
+        const response = await fetch("/api/inscription", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert(
+                "Inscription réussie !\n\nNuméro : " +
+                result.numero
+            );
+
+            form.reset();
+
+        } else {
+
+            alert("Erreur : " + result.error);
+
+        }
+
+    };
+
+    reader.readAsDataURL(photo);
 
 });
