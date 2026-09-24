@@ -3,61 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MEH - Inscription</title>
+  <title>MEH | Formulaire d'inscription</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <header class="hero">
-      <img src="logo.png" class="logo">
+<header class="hero">
 
-      <h1>Maranatha École Hôtelière & Service Traiteur</h1>
+  <img src="logo.png" class="logo" alt="Logo MEH">
 
-      <p>Former pour agir</p>
-  </header>
+  <h1>Maranatha École Hôtelière & Service Traiteur</h1>
 
-  <main class="container">
+  <p>Former pour agir</p>
 
-      <h2>Formulaire d'inscription</h2>
+</header>
 
-      <form id="form">
+<main class="container">
 
-          <input type="text" placeholder="Nom" required>
+  <h2>FORMULAIRE D'INSCRIPTION</h2>
 
-          <input type="text" placeholder="Prénom" required>
+  <form id="form">
 
-          <input type="tel" placeholder="Téléphone" required>
+    <div class="grid">
 
-          <input type="email" placeholder="Email">
+      <div class="inputBox">
+        <label>Nom</label>
+        <input type="text" name="nom" required>
+      </div>
 
-          <h3>Choisissez votre option</h3>
+      <div class="inputBox">
+        <label>Prénom</label>
+        <input type="text" name="prenom" required>
+      </div>
 
-          <select required>
+      <div class="inputBox">
+        <label>Sexe</label>
+        <select name="sexe" required>
+          <option value="">Choisir</option>
+          <option>Masculin</option>
+          <option>Féminin</option>
+        </select>
+      </div>
 
-              <option value="">Sélectionnez</option>
+      <div class="inputBox">
+        <label>Date de naissance</label>
+        <input type="date" name="naissance" required>
+      </div>
 
-              <option>Cuisine et Pâtisserie (6 mois)</option>
+    </div>
 
-              <option>Décoration de gâteau (3 mois)</option>
+    <div class="inputBox">
+      <label>Lieu de naissance</label>
+      <input type="text" name="lieu" required>
+    </div>
 
-              <option>Art culinaire (10 mois)</option>
+    <div class="inputBox">
+      <label>Adresse complète</label>
+      <textarea name="adresse" rows="2"></textarea>
+    </div>
 
-              <option>Cuisine, Pâtisserie et Protocole (3 mois)</option>
+    <div class="grid">
 
-              <option>Informatique bureautique côté entreprise (6 mois)</option>
+      <div class="inputBox">
+        <label>Téléphone</label>
+        <input type="tel" name="telephone" required>
+      </div>
 
-          </select>
+      <div class="inputBox">
+        <label>Email</label>
+        <input type="email" name="email">
+      </div>
 
-          <h3>Photo de la pièce d'identité</h3>
+    </div>
 
-          <input type="file" accept="image/*" required>
+    <h3>Choisissez votre option</h3>
 
-          <button>S'inscrire</button>
+    <div class="options">
 
-      </form>
+      <label>
+        <input type="radio" name="option" value="Cuisine et Pâtisserie" required>
+        👨🏽‍🍳 Cuisine et Pâtisserie
+        <span>6 mois</span>
+      </label>
 
-  </main>
+      <label>
+        <input type="radio" name="option" value="Décoration de gâteau">
+        🎂 Décoration de gâteau
+        <span>3 mois</span>
+      </label>
+
+      <label>
+        <input type="radio" name="option" value="Art culinaire">
+        🍽️ Art culinaire
+        <span>10 mois</span>
+      </label>
+
+      <label>
+        <input type="radio" name="option" value="Cuisine, Pâtisserie et Protocole">
+        👔 Cuisine, Pâtisserie et Protocole
+        <span>3 mois</span>
+      </label>
+
+      <label>
+        <input type="radio" name="option" value="Informatique bureautique côté entreprise">
+        💻 Informatique bureautique côté entreprise
+        <span>6 mois</span>
+        <small>Informatique de base • Excel • Développement Web • Python • Réseaux & Sécurité</small>
+      </label>
+
+    </div>
+
+    <h3>Parent ou tuteur</h3>
+
+    <div class="grid">
+
+      <div class="inputBox">
+        <label>Nom du parent</label>
+        <input type="text" name="parent" required>
+      </div>
+
+      <div class="inputBox">
+        <label>Téléphone du parent</label>
+        <input type="tel" name="tel_parent" required>
+      </div>
+
+    </div>
+
+    <div class="inputBox">
+
+      <label>Photo de la pièce d'identité</label>
+
+      <input
+        type="file"
+        id="photo"
+        accept="image/*"
+        required>
+
+    </div>
+
+    <button type="submit" class="btn">
+      S'INSCRIRE
+    </button>
+
+  </form>
+
+</main>
+
+<script src="app.js"></script>
 
 </body>
 </html>
