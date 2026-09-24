@@ -1,6 +1,6 @@
 // ================================
 // ADMINISTRATION MEH
-// Liste + PDF complet avec photo bien placée
+// Liste + PDF complet avec photo en haut à droite
 // ================================
 
 async function charger() {
@@ -22,8 +22,6 @@ async function charger() {
 
     data.forEach((e, i) => {
       const tr = document.createElement("tr");
-
-      // On passe tout l'objet en JSON (sécurisé)
       const jsonSafe = encodeURIComponent(JSON.stringify(e));
 
       tr.innerHTML = `
@@ -48,7 +46,7 @@ async function charger() {
 }
 
 // ================================
-// PDF COMPLET
+// PDF COMPLET — photo en haut à droite
 // ================================
 async function pdf(jsonSafe) {
   const e = JSON.parse(decodeURIComponent(jsonSafe));
@@ -82,14 +80,21 @@ async function pdf(jsonSafe) {
   doc.setFontSize(12);
   doc.text("N° " + (e.numero || ""), 105, 60, { align: "center" });
 
-  // ---------- SECTION : INFOS PERSONNELLES ----------
+  // ============================================================
+  // ZONE PHOTO (réservée à droite, de Y=76 jusqu'en bas)
+  // ============================================================
+  const PHOTO_X = 148;   // bord gauche de la zone photo
+  const PHOTO_W = 48;    // largeur fixe
+  const PHOTO_Y = 76;    // aligné sur la première ligne "Nom :"
+
+  // ---------- SECTION : INFOS PERSONNELLES (côté gauche) ----------
   let y = 78;
   doc.setTextColor(...ROUGE);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
   doc.text("INFORMATIONS PERSONNELLES", 20, y);
   doc.setDrawColor(...ROUGE);
-  doc.line(20, y + 2, 190, y + 2);
+  doc.line(20, y + 2, 140, y + 2);  // ligne limitée à gauche (photo à droite)
   y += 12;
 
   doc.setTextColor(0, 0, 0);
@@ -102,10 +107,10 @@ async function pdf(jsonSafe) {
     const texte = String(valeur || "-");
     if (maxWidth) {
       const wrapped = doc.splitTextToSize(texte, maxWidth);
-      doc.text(wrapped, 75, y);
+      doc.text(wrapped, 72, y);
       y += wrapped.length * 6 + 2;
     } else {
-      doc.text(texte, 75, y);
+      doc.text(texte, 72, y);
       y += 8;
     }
   };
@@ -115,9 +120,58 @@ async function pdf(jsonSafe) {
   ligne("Sexe", e.sexe);
   ligne("Date de naissance", e.naissance);
   ligne("Lieu de naissance", e.lieu);
-  ligne("Adresse", e.adresse, 110);
+  ligne("Adresse", e.adresse, 60);
   ligne("Téléphone", e.telephone);
-  ligne("Email", e.email, 110);
+  ligne("Email", e.email, 60);
+
+  // ============================================================
+  // INSERTION DE LA PHOTO dans la zone réservée à droite
+  // ============================================================
+  const PHOTO_ZONE_H = Math.max(y - PHOTO_Y - 4, 60); // hauteur dispo
+
+  if (e.photo_piece && typeof e.photo_piece === "string" && e.photo_piece.startsWith("data:image")) {
+    try {
+      const dims = await getImageDimensions(e.photo_piece);
+      const format = e.photo_piece.includes("png") ? "PNG" : "JPEG";
+
+      let w = PHOTO_W;
+      let h = PHOTO_ZONE_H;
+
+      // Ajustement du ratio pour ne pas déformer
+      if (dims && dims.w && dims.h) {
+        const ratio = dims.w / dims.h;
+        if (PHOTO_W / PHOTO_ZONE_H > ratio) {
+          h = PHOTO_ZONE_H;
+          w = PHOTO_ZONE_H * ratio;
+        } else {
+          w = PHOTO_W;
+          h = PHOTO_W / ratio;
+        }
+      }
+
+      // Centrer la photo dans la zone réservée
+      const photoX = PHOTO_X + (PHOTO_W - w) / 2;
+
+      // Cadre bordeaux
+      doc.setDrawColor(...ROUGE);
+      doc.setLineWidth(0.6);
+      doc.rect(photoX - 1.5, PHOTO_Y - 1.5, w + 3, h + 3);
+
+      doc.addImage(e.photo_piece, format, photoX, PHOTO_Y, w, h);
+
+    } catch (err) {
+      console.warn("Photo non ajoutée :", err);
+    }
+  } else {
+    // Pas de photo → cadre vide
+    doc.setDrawColor(180);
+    doc.setLineWidth(0.3);
+    doc.rect(PHOTO_X, PHOTO_Y, PHOTO_W, PHOTO_ZONE_H);
+    doc.setFontSize(9);
+    doc.setTextColor(150);
+    doc.text("Photo", PHOTO_X + PHOTO_W / 2, PHOTO_Y + PHOTO_ZONE_H / 2 - 3, { align: "center" });
+    doc.text("non fournie", PHOTO_X + PHOTO_W / 2, PHOTO_Y + PHOTO_ZONE_H / 2 + 3, { align: "center" });
+  }
 
   // ---------- SECTION : FORMATION ----------
   y += 4;
@@ -125,13 +179,14 @@ async function pdf(jsonSafe) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);
   doc.text("FORMATION CHOISIE", 20, y);
+  doc.setDrawColor(...ROUGE);
   doc.line(20, y + 2, 190, y + 2);
   y += 12;
 
   doc.setTextColor(0, 0, 0);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
-  const formation = doc.splitTextToSize(String(e.option_formation || "-"), 160);
+  const formation = doc.splitTextToSize(String(e.option_formation || "-"), 170);
   doc.text(formation, 20, y);
   y += formation.length * 6 + 6;
 
@@ -147,72 +202,6 @@ async function pdf(jsonSafe) {
   doc.setFontSize(11);
   ligne("Nom", e.parent);
   ligne("Téléphone", e.tel_parent);
-
-  // ---------- SECTION : PIÈCE D'IDENTITÉ (PHOTO) ----------
-  let photoAjoutee = false;
-
-  if (e.photo_piece && typeof e.photo_piece === "string" && e.photo_piece.startsWith("data:image")) {
-    try {
-      const dims = await getImageDimensions(e.photo_piece);
-      const format = e.photo_piece.includes("png") ? "PNG" : "JPEG";
-
-      // Position de la section photo
-      const ySection = Math.min(y + 6, 200);
-
-      doc.setTextColor(...ROUGE);
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.text("PIÈCE D'IDENTITÉ", 20, ySection);
-      doc.setDrawColor(...ROUGE);
-      doc.line(20, ySection + 2, 190, ySection + 2);
-
-      // Espace disponible jusqu'au pied de page (275) avec marge
-      const maxH = 275 - (ySection + 8) - 5;
-      const maxW = 120;
-
-      // Calcul du ratio pour ne pas déformer
-      let w = maxW;
-      let h = maxH;
-      if (dims && dims.w && dims.h) {
-        const ratio = dims.w / dims.h;
-        if (maxW / maxH > ratio) {
-          h = maxH;
-          w = maxH * ratio;
-        } else {
-          w = maxW;
-          h = maxW / ratio;
-        }
-      }
-
-      // Centrer horizontalement
-      const photoX = (210 - w) / 2;
-      const photoY = ySection + 8;
-
-      doc.addImage(e.photo_piece, format, photoX, photoY, w, h);
-
-      // Cadre autour de la photo
-      doc.setDrawColor(...ROUGE);
-      doc.setLineWidth(0.5);
-      doc.rect(photoX, photoY, w, h);
-
-      photoAjoutee = true;
-
-    } catch (err) {
-      console.warn("Photo non ajoutée :", err);
-    }
-  }
-
-  // ---------- MENTION SI PHOTO ABSENTE ----------
-  if (!photoAjoutee) {
-    doc.setFontSize(9);
-    doc.setTextColor(150);
-    doc.text(
-      "(Aucune pièce d'identité fournie ou format non affichable)",
-      105,
-      265,
-      { align: "center" }
-    );
-  }
 
   // ---------- PIED DE PAGE ----------
   doc.setFillColor(...ROUGE);
