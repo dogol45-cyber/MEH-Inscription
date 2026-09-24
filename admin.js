@@ -1,6 +1,6 @@
 // ================================
 // ADMINISTRATION MEH
-// Liste + PDF complet avec photo
+// Liste + PDF complet avec photo bien placée
 // ================================
 
 async function charger() {
@@ -82,21 +82,6 @@ async function pdf(jsonSafe) {
   doc.setFontSize(12);
   doc.text("N° " + (e.numero || ""), 105, 60, { align: "center" });
 
-  // ---------- PHOTO (en haut à droite) ----------
-  let photoAjoutee = false;
-  if (e.photo_piece && typeof e.photo_piece === "string" && e.photo_piece.startsWith("data:image")) {
-    try {
-      const format = e.photo_piece.includes("png") ? "PNG" : "JPEG";
-      doc.addImage(e.photo_piece, format, 155, 40, 40, 50);
-      doc.setDrawColor(180);
-      doc.setLineWidth(0.3);
-      doc.rect(155, 40, 40, 50);
-      photoAjoutee = true;
-    } catch (err) {
-      console.warn("Photo non ajoutée :", err);
-    }
-  }
-
   // ---------- SECTION : INFOS PERSONNELLES ----------
   let y = 78;
   doc.setTextColor(...ROUGE);
@@ -163,11 +148,70 @@ async function pdf(jsonSafe) {
   ligne("Nom", e.parent);
   ligne("Téléphone", e.tel_parent);
 
-  // ---------- MENTION PHOTO SI ABSENTE ----------
-  if (!photoAjoutee && e.photo_piece) {
+  // ---------- SECTION : PIÈCE D'IDENTITÉ (PHOTO) ----------
+  let photoAjoutee = false;
+
+  if (e.photo_piece && typeof e.photo_piece === "string" && e.photo_piece.startsWith("data:image")) {
+    try {
+      const dims = await getImageDimensions(e.photo_piece);
+      const format = e.photo_piece.includes("png") ? "PNG" : "JPEG";
+
+      // Position de la section photo
+      const ySection = Math.min(y + 6, 200);
+
+      doc.setTextColor(...ROUGE);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("PIÈCE D'IDENTITÉ", 20, ySection);
+      doc.setDrawColor(...ROUGE);
+      doc.line(20, ySection + 2, 190, ySection + 2);
+
+      // Espace disponible jusqu'au pied de page (275) avec marge
+      const maxH = 275 - (ySection + 8) - 5;
+      const maxW = 120;
+
+      // Calcul du ratio pour ne pas déformer
+      let w = maxW;
+      let h = maxH;
+      if (dims && dims.w && dims.h) {
+        const ratio = dims.w / dims.h;
+        if (maxW / maxH > ratio) {
+          h = maxH;
+          w = maxH * ratio;
+        } else {
+          w = maxW;
+          h = maxW / ratio;
+        }
+      }
+
+      // Centrer horizontalement
+      const photoX = (210 - w) / 2;
+      const photoY = ySection + 8;
+
+      doc.addImage(e.photo_piece, format, photoX, photoY, w, h);
+
+      // Cadre autour de la photo
+      doc.setDrawColor(...ROUGE);
+      doc.setLineWidth(0.5);
+      doc.rect(photoX, photoY, w, h);
+
+      photoAjoutee = true;
+
+    } catch (err) {
+      console.warn("Photo non ajoutée :", err);
+    }
+  }
+
+  // ---------- MENTION SI PHOTO ABSENTE ----------
+  if (!photoAjoutee) {
     doc.setFontSize(9);
     doc.setTextColor(150);
-    doc.text("(Photo non disponible dans un format affichable)", 105, 265, { align: "center" });
+    doc.text(
+      "(Aucune pièce d'identité fournie ou format non affichable)",
+      105,
+      265,
+      { align: "center" }
+    );
   }
 
   // ---------- PIED DE PAGE ----------
@@ -187,6 +231,18 @@ async function pdf(jsonSafe) {
 
   // ---------- SAUVEGARDE ----------
   doc.save((e.numero || "fiche") + ".pdf");
+}
+
+// ================================
+// Utilitaire : dimensions d'une image base64
+// ================================
+function getImageDimensions(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ w: img.width, h: img.height });
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
 }
 
 // Lancement
