@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Administration MEH</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header class="hero">
+
+<img src="logo.png" class="logo">
+
+<h1>Administration</h1>
+
+<p>Maranatha École Hôtelière</p>
+
+</header>
+
+<div class="container">
+
+<h2>Liste des inscriptions</h2>
+
+<table id="table" width="100%" border="1" cellspacing="0" cellpadding="8">
+<thead>
+
+<tr>
+<th>N°</th>
+<th>Nom</th>
+<th>Prénom</th>
+<th>Option</th>
+</tr>
+
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+async function charger(){
+
+const r=await fetch("/api/liste");
+
+const data=await r.json();
+
+const body=document.querySelector("tbody");
+
+body.innerHTML="";
+
+data.forEach(e=>{
+
+body.innerHTML+=`
+<tr>
+
+<td>${e.numero}</td>
+
+<td>${e.nom}</td>
+
+<td>${e.prenom}</td>
+
+<td>${e.option_formation}</td>
+
+</tr>
+`;
+
+});
+
+}
+
+charger();
+
+</script>
+
+</body>
+</html>
