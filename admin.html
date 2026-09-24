@@ -14,37 +14,89 @@
 <body>
 
 <header class="hero">
-
-<img src="logo.png" class="logo">
-
-<h1>Administration MEH</h1>
-
-<p>Maranatha École Hôtelière & Service Traiteur</p>
-
+  <img src="logo.png" class="logo" alt="Logo MEH">
+  <h1>Administration MEH</h1>
+  <p>Maranatha École Hôtelière & Service Traiteur</p>
 </header>
 
 <div class="container">
+  <h2>Étudiants inscrits</h2>
 
-<h2>Étudiants inscrits</h2>
+  <input
+    type="text"
+    id="recherche"
+    placeholder="🔎 Rechercher par nom, prénom, numéro, téléphone..."
+    style="margin-bottom: 15px;"
+  >
 
-<table id="table" width="100%" border="1" cellspacing="0" cellpadding="8">
+  <table id="table">
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Numéro</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Option</th>
+        <th>Téléphone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
-<thead>
-  <tr>
-    <th>N°</th>
-    <th>Numéro</th>
-    <th>Nom</th>
-    <th>Prénom</th>
-    <th>Option</th>
-    <th>Téléphone</th>
-    <th>PDF</th>
-  </tr>
-</thead>
+<!-- ==================== MODAL D'ÉDITION ==================== -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fermerModal()">&times;</span>
+    <h2>Modifier l'inscription</h2>
 
-<tbody></tbody>
+    <form id="form-modifier" onsubmit="sauvegarderModif(event)">
+      <input type="hidden" id="edit-id">
 
-</table>
+      <label>Nom</label>
+      <input type="text" id="edit-nom" required>
 
+      <label>Prénom</label>
+      <input type="text" id="edit-prenom" required>
+
+      <label>Sexe</label>
+      <select id="edit-sexe">
+        <option value="">Choisir</option>
+        <option value="Masculin">Masculin</option>
+        <option value="Féminin">Féminin</option>
+      </select>
+
+      <label>Date de naissance</label>
+      <input type="date" id="edit-naissance">
+
+      <label>Lieu de naissance</label>
+      <input type="text" id="edit-lieu">
+
+      <label>Adresse complète</label>
+      <textarea id="edit-adresse"></textarea>
+
+      <label>Téléphone</label>
+      <input type="tel" id="edit-telephone">
+
+      <label>Email</label>
+      <input type="email" id="edit-email">
+
+      <label>Option de formation</label>
+      <input type="text" id="edit-option">
+
+      <label>Nom du parent / tuteur</label>
+      <input type="text" id="edit-parent">
+
+      <label>Téléphone du parent</label>
+      <input type="tel" id="edit-tel-parent">
+
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button type="submit" style="flex:1;">💾 Enregistrer</button>
+        <button type="button" onclick="fermerModal()" style="flex:1; background:#666;">Annuler</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script src="admin.js"></script>
