@@ -1,8 +1,125 @@
 // ================================
-// ADMINISTRATION MEH — CRUD complet
+// ADMINISTRATION MEH — avec authentification
 // ================================
 
 let toutesLesInscriptions = [];
+let tokenActuel = null;
+
+// ================================
+// GESTION DU TOKEN
+// ================================
+function getToken() {
+  return localStorage.getItem("meh_token");
+}
+
+function setToken(token) {
+  localStorage.setItem("meh_token", token);
+  tokenActuel = token;
+}
+
+function supprimerToken() {
+  localStorage.removeItem("meh_token");
+  tokenActuel = null;
+}
+
+function authHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + (tokenActuel || "")
+  };
+}
+
+// ================================
+// CONNEXION
+// ================================
+async function connexion(ev) {
+  ev.preventDefault();
+
+  const username = document.getElementById("login-username").value.trim();
+  const password = document.getElementById("login-password").value;
+  const erreurEl = document.getElementById("login-erreur");
+  erreurEl.textContent = "";
+
+  try {
+    const r = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const res = await r.json();
+
+    if (!r.ok) {
+      erreurEl.textContent = res.error || "Erreur de connexion";
+      return;
+    }
+
+    setToken(res.token);
+    afficherApp(res.user);
+
+  } catch (err) {
+    erreurEl.textContent = "Erreur réseau : " + err.message;
+  }
+}
+
+function afficherApp(user) {
+  document.getElementById("ecran-connexion").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  document.getElementById("user-info").textContent =
+    "👤 " + (user.nom_complet || user.username);
+  charger();
+}
+
+// ================================
+// DÉCONNEXION
+// ================================
+async function deconnexion() {
+  if (!confirm("Voulez-vous vous déconnecter ?")) return;
+
+  try {
+    await fetch("/api/deconnexion", {
+      method: "POST",
+      headers: authHeaders()
+    });
+  } catch (e) { /* ignore */ }
+
+  supprimerToken();
+  location.reload();
+}
+
+// ================================
+// VÉRIFICATION AU DÉMARRAGE
+// ================================
+async function verifierAuth() {
+  const token = getToken();
+  if (!token) return false;
+
+  tokenActuel = token;
+
+  try {
+    const r = await fetch("/api/verifier", {
+      method: "POST",
+      headers: authHeaders()
+    });
+
+    if (!r.ok) {
+      supprimerToken();
+      return false;
+    }
+
+    const res = await r.json();
+    if (res.valide) {
+      afficherApp(res.user);
+      return true;
+    }
+
+    supprimerToken();
+    return false;
+
+  } catch (err) {
+    return false;
+  }
+}
 
 // ================================
 // CHARGEMENT (READ)
@@ -12,7 +129,14 @@ async function charger() {
   tbody.innerHTML = `<tr><td colspan="7">Chargement...</td></tr>`;
 
   try {
-    const r = await fetch("/api/liste");
+    const r = await fetch("/api/liste", { headers: authHeaders() });
+
+    if (r.status === 401) {
+      supprimerToken();
+      location.reload();
+      return;
+    }
+
     if (!r.ok) throw new Error("Erreur " + r.status);
 
     const data = await r.json();
@@ -82,6 +206,9 @@ document.addEventListener("DOMContentLoaded", () => {
       afficher(filtre);
     });
   }
+
+  // Vérifier auth au démarrage
+  verifierAuth();
 });
 
 // ================================
@@ -139,7 +266,7 @@ async function sauvegarderModif(ev) {
   try {
     const r = await fetch("/api/modifier", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify(data)
     });
 
@@ -165,7 +292,7 @@ async function supprimer(id, nom) {
   try {
     const r = await fetch("/api/supprimer", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders(),
       body: JSON.stringify({ id })
     });
 
@@ -347,5 +474,3 @@ function getImageDimensions(dataUrl) {
     img.src = dataUrl;
   });
 }
-
-charger();
