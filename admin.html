@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Administration MEH</title>
-
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
-<!-- ============ STYLES DE CONNEXION (intégrés directement) ============ -->
 <style>
 .ecran-connexion {
   display: flex !important;
@@ -18,7 +17,6 @@
   padding: 20px;
   margin: 0;
 }
-
 .ecran-connexion .login-box {
   background: white;
   padding: 40px 30px;
@@ -28,7 +26,6 @@
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
-
 .ecran-connexion .login-box img.logo {
   width: 100px !important;
   height: 100px !important;
@@ -42,102 +39,27 @@
   padding: 5px;
   border: 3px solid #8B0000;
 }
-
-.ecran-connexion .login-box h1 {
-  color: #8B0000;
-  font-size: 1.5rem;
-  margin-bottom: 5px;
-}
-
-.ecran-connexion .login-box p {
-  color: #666;
-  margin-bottom: 25px;
-}
-
-.ecran-connexion .login-box form {
-  text-align: left;
-}
-
-.ecran-connexion .login-box label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
-  color: #333;
-  font-size: 0.9rem;
-}
-
+.ecran-connexion .login-box h1 { color: #8B0000; font-size: 1.5rem; margin-bottom: 5px; }
+.ecran-connexion .login-box p { color: #666; margin-bottom: 25px; }
+.ecran-connexion .login-box form { text-align: left; }
+.ecran-connexion .login-box label { display: block; margin-top: 15px; font-weight: 600; color: #333; font-size: 0.9rem; }
 .ecran-connexion .login-box input {
-  width: 100%;
-  padding: 12px 15px;
-  margin-top: 5px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  box-sizing: border-box;
+  width: 100%; padding: 12px 15px; margin-top: 5px;
+  border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
+  font-family: inherit; box-sizing: border-box;
 }
-
-.ecran-connexion .login-box input:focus {
-  outline: none;
-  border-color: #8B0000;
-  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
+.ecran-connexion .login-box input:focus { outline: none; border-color: #8B0000; box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1); }
 .ecran-connexion .login-box button {
-  width: 100%;
-  margin-top: 25px;
-  padding: 14px;
-  font-size: 1.05rem;
-  font-weight: bold;
-  background: #8B0000;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  width: 100%; margin-top: 25px; padding: 14px; font-size: 1.05rem;
+  font-weight: bold; background: #8B0000; color: white; border: none;
+  border-radius: 8px; cursor: pointer;
 }
-
-.ecran-connexion .login-box button:hover {
-  background: #A50000;
-}
-
-.login-erreur {
-  color: #c62828;
-  text-align: center;
-  margin-top: 15px;
-  font-weight: 600;
-  min-height: 20px;
-}
-
-.user-bar {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.user-bar span {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 6px 15px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  color: white;
-}
-
-.user-bar button {
-  padding: 6px 15px;
-  font-size: 0.85rem;
-  background: #444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+.ecran-connexion .login-box button:hover { background: #A50000; }
+.login-erreur { color: #c62828; text-align: center; margin-top: 15px; font-weight: 600; min-height: 20px; }
+.user-bar { margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
+.user-bar span { background: rgba(255, 255, 255, 0.2); padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; color: white; }
+.user-bar button { padding: 6px 15px; font-size: 0.85rem; background: #444; color: white; border: none; border-radius: 6px; cursor: pointer; }
 </style>
-
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
 </head>
 <body>
 
@@ -148,7 +70,7 @@
     <h1>Administration MEH</h1>
     <p>Veuillez vous connecter</p>
 
-    <form id="form-connexion" onsubmit="connexion(event)">
+    <form id="form-connexion">
       <label>Nom d'utilisateur</label>
       <input type="text" id="login-username" required autocomplete="username">
 
@@ -162,9 +84,8 @@
   </div>
 </div>
 
-<!-- ============ APPLICATION (cachée au départ) ============ -->
+<!-- ============ APPLICATION ============ -->
 <div id="app" style="display:none;">
-
   <header class="hero">
     <img src="logo.png" class="logo" alt="Logo MEH">
     <h1>Administration MEH</h1>
@@ -177,76 +98,40 @@
 
   <div class="container">
     <h2>Étudiants inscrits</h2>
-
-    <input
-      type="text"
-      id="recherche"
-      placeholder="🔎 Rechercher par nom, prénom, numéro, téléphone..."
-      style="margin-bottom: 15px;"
-    >
-
+    <input type="text" id="recherche" placeholder="🔎 Rechercher..." style="margin-bottom: 15px;">
     <table id="table">
       <thead>
         <tr>
-          <th>N°</th>
-          <th>Numéro</th>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Option</th>
-          <th>Téléphone</th>
-          <th>Actions</th>
+          <th>N°</th><th>Numéro</th><th>Nom</th><th>Prénom</th>
+          <th>Option</th><th>Téléphone</th><th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </div>
 
-  <!-- MODAL D'ÉDITION -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="fermerModal()">&times;</span>
       <h2>Modifier l'inscription</h2>
-
       <form id="form-modifier" onsubmit="sauvegarderModif(event)">
         <input type="hidden" id="edit-id">
-
-        <label>Nom</label>
-        <input type="text" id="edit-nom" required>
-
-        <label>Prénom</label>
-        <input type="text" id="edit-prenom" required>
-
+        <label>Nom</label><input type="text" id="edit-nom" required>
+        <label>Prénom</label><input type="text" id="edit-prenom" required>
         <label>Sexe</label>
         <select id="edit-sexe">
           <option value="">Choisir</option>
           <option value="Masculin">Masculin</option>
           <option value="Féminin">Féminin</option>
         </select>
-
-        <label>Date de naissance</label>
-        <input type="date" id="edit-naissance">
-
-        <label>Lieu de naissance</label>
-        <input type="text" id="edit-lieu">
-
-        <label>Adresse complète</label>
-        <textarea id="edit-adresse"></textarea>
-
-        <label>Téléphone</label>
-        <input type="tel" id="edit-telephone">
-
-        <label>Email</label>
-        <input type="email" id="edit-email">
-
-        <label>Option de formation</label>
-        <input type="text" id="edit-option">
-
-        <label>Nom du parent / tuteur</label>
-        <input type="text" id="edit-parent">
-
-        <label>Téléphone du parent</label>
-        <input type="tel" id="edit-tel-parent">
-
+        <label>Date de naissance</label><input type="date" id="edit-naissance">
+        <label>Lieu de naissance</label><input type="text" id="edit-lieu">
+        <label>Adresse complète</label><textarea id="edit-adresse"></textarea>
+        <label>Téléphone</label><input type="tel" id="edit-telephone">
+        <label>Email</label><input type="email" id="edit-email">
+        <label>Option de formation</label><input type="text" id="edit-option">
+        <label>Nom du parent / tuteur</label><input type="text" id="edit-parent">
+        <label>Téléphone du parent</label><input type="tel" id="edit-tel-parent">
         <div style="display:flex; gap:10px; margin-top:20px;">
           <button type="submit" style="flex:1;">💾 Enregistrer</button>
           <button type="button" onclick="fermerModal()" style="flex:1; background:#666;">Annuler</button>
@@ -254,8 +139,82 @@
       </form>
     </div>
   </div>
-
 </div>
+
+<!-- ============ SCRIPT DE CONNEXION (intégré) ============ -->
+<script>
+// ===== Gestion du token =====
+function getToken() { return localStorage.getItem("meh_token"); }
+function setToken(t) { localStorage.setItem("meh_token", t); }
+function supprimerToken() { localStorage.removeItem("meh_token"); }
+
+// ===== Connexion =====
+document.getElementById("form-connexion").addEventListener("submit", async function(ev) {
+  ev.preventDefault();
+  console.log("🔵 Bouton connexion cliqué");
+
+  const username = document.getElementById("login-username").value.trim();
+  const password = document.getElementById("login-password").value;
+  const erreurEl = document.getElementById("login-erreur");
+  erreurEl.textContent = "";
+
+  console.log("🔵 Envoi vers /api/auth avec username =", username);
+
+  try {
+    const r = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    console.log("🔵 Réponse status =", r.status);
+
+    const res = await r.json();
+    console.log("🔵 Réponse data =", res);
+
+    if (!r.ok) {
+      erreurEl.textContent = res.error || "Erreur de connexion";
+      return;
+    }
+
+    setToken(res.token);
+    document.getElementById("ecran-connexion").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    document.getElementById("user-info").textContent = "👤 " + (res.user.nom_complet || res.user.username);
+    console.log("✅ Connecté !");
+
+    // Charger les données via admin.js
+    if (typeof charger === "function") charger();
+
+  } catch (err) {
+    console.error("❌ Erreur :", err);
+    erreurEl.textContent = "Erreur réseau : " + err.message;
+  }
+});
+
+// ===== Vérification au démarrage =====
+window.addEventListener("DOMContentLoaded", async () => {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const r = await fetch("/api/verifier", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
+    });
+
+    if (!r.ok) { supprimerToken(); return; }
+    const res = await r.json();
+    if (!res.valide) { supprimerToken(); return; }
+
+    document.getElementById("ecran-connexion").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    document.getElementById("user-info").textContent = "👤 " + (res.user.nom_complet || res.user.username);
+    if (typeof charger === "function") charger();
+
+  } catch (e) { /* ignore */ }
+});
+</script>
 
 <script src="admin.js"></script>
 
