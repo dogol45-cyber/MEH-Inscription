@@ -4,99 +4,125 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Administration MEH</title>
-
 <link rel="stylesheet" href="style.css">
-
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
 </head>
-
 <body>
 
-<header class="hero">
-  <img src="logo.png" class="logo" alt="Logo MEH">
-  <h1>Administration MEH</h1>
-  <p>Maranatha École Hôtelière & Service Traiteur</p>
-</header>
+<!-- ============ ÉCRAN DE CONNEXION ============ -->
+<div id="ecran-connexion" class="ecran-connexion">
+  <div class="login-box">
+    <img src="logo.png" class="logo" alt="Logo MEH">
+    <h1>Administration MEH</h1>
+    <p>Veuillez vous connecter</p>
 
-<div class="container">
-  <h2>Étudiants inscrits</h2>
+    <form id="form-connexion" onsubmit="connexion(event)">
+      <label>Nom d'utilisateur</label>
+      <input type="text" id="login-username" required autocomplete="username">
 
-  <input
-    type="text"
-    id="recherche"
-    placeholder="🔎 Rechercher par nom, prénom, numéro, téléphone..."
-    style="margin-bottom: 15px;"
-  >
+      <label>Mot de passe</label>
+      <input type="password" id="login-password" required autocomplete="current-password">
 
-  <table id="table">
-    <thead>
-      <tr>
-        <th>N°</th>
-        <th>Numéro</th>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Option</th>
-        <th>Téléphone</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+      <button type="submit">🔐 Se connecter</button>
 
-<!-- ==================== MODAL D'ÉDITION ==================== -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="fermerModal()">&times;</span>
-    <h2>Modifier l'inscription</h2>
-
-    <form id="form-modifier" onsubmit="sauvegarderModif(event)">
-      <input type="hidden" id="edit-id">
-
-      <label>Nom</label>
-      <input type="text" id="edit-nom" required>
-
-      <label>Prénom</label>
-      <input type="text" id="edit-prenom" required>
-
-      <label>Sexe</label>
-      <select id="edit-sexe">
-        <option value="">Choisir</option>
-        <option value="Masculin">Masculin</option>
-        <option value="Féminin">Féminin</option>
-      </select>
-
-      <label>Date de naissance</label>
-      <input type="date" id="edit-naissance">
-
-      <label>Lieu de naissance</label>
-      <input type="text" id="edit-lieu">
-
-      <label>Adresse complète</label>
-      <textarea id="edit-adresse"></textarea>
-
-      <label>Téléphone</label>
-      <input type="tel" id="edit-telephone">
-
-      <label>Email</label>
-      <input type="email" id="edit-email">
-
-      <label>Option de formation</label>
-      <input type="text" id="edit-option">
-
-      <label>Nom du parent / tuteur</label>
-      <input type="text" id="edit-parent">
-
-      <label>Téléphone du parent</label>
-      <input type="tel" id="edit-tel-parent">
-
-      <div style="display:flex; gap:10px; margin-top:20px;">
-        <button type="submit" style="flex:1;">💾 Enregistrer</button>
-        <button type="button" onclick="fermerModal()" style="flex:1; background:#666;">Annuler</button>
-      </div>
+      <p id="login-erreur" class="login-erreur"></p>
     </form>
   </div>
+</div>
+
+<!-- ============ APPLICATION (cachée au départ) ============ -->
+<div id="app" style="display:none;">
+
+  <header class="hero">
+    <img src="logo.png" class="logo" alt="Logo MEH">
+    <h1>Administration MEH</h1>
+    <p>Maranatha École Hôtelière & Service Traiteur</p>
+    <div class="user-bar">
+      <span id="user-info">👤 —</span>
+      <button onclick="deconnexion()" style="background:#444">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Étudiants inscrits</h2>
+
+    <input
+      type="text"
+      id="recherche"
+      placeholder="🔎 Rechercher par nom, prénom, numéro, téléphone..."
+      style="margin-bottom: 15px;"
+    >
+
+    <table id="table">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Numéro</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Option</th>
+          <th>Téléphone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- MODAL D'ÉDITION -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="fermerModal()">&times;</span>
+      <h2>Modifier l'inscription</h2>
+
+      <form id="form-modifier" onsubmit="sauvegarderModif(event)">
+        <input type="hidden" id="edit-id">
+
+        <label>Nom</label>
+        <input type="text" id="edit-nom" required>
+
+        <label>Prénom</label>
+        <input type="text" id="edit-prenom" required>
+
+        <label>Sexe</label>
+        <select id="edit-sexe">
+          <option value="">Choisir</option>
+          <option value="Masculin">Masculin</option>
+          <option value="Féminin">Féminin</option>
+        </select>
+
+        <label>Date de naissance</label>
+        <input type="date" id="edit-naissance">
+
+        <label>Lieu de naissance</label>
+        <input type="text" id="edit-lieu">
+
+        <label>Adresse complète</label>
+        <textarea id="edit-adresse"></textarea>
+
+        <label>Téléphone</label>
+        <input type="tel" id="edit-telephone">
+
+        <label>Email</label>
+        <input type="email" id="edit-email">
+
+        <label>Option de formation</label>
+        <input type="text" id="edit-option">
+
+        <label>Nom du parent / tuteur</label>
+        <input type="text" id="edit-parent">
+
+        <label>Téléphone du parent</label>
+        <input type="tel" id="edit-tel-parent">
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+          <button type="submit" style="flex:1;">💾 Enregistrer</button>
+          <button type="button" onclick="fermerModal()" style="flex:1; background:#666;">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>
 
 <script src="admin.js"></script>
