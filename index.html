@@ -4,20 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MEH | Formulaire d'inscription</title>
-
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="hero">
-
   <img src="logo.png" class="logo" alt="Logo MEH">
-
   <h1>Maranatha École Hôtelière & Service Traiteur</h1>
-
   <p>Former pour agir</p>
-
 </header>
 
 <main class="container">
@@ -27,15 +22,14 @@
   <form id="form">
 
     <div class="grid">
-
       <div class="inputBox">
         <label>Nom</label>
-        <input type="text" name="nom" required>
+        <input type="text" name="nom" required minlength="2">
       </div>
 
       <div class="inputBox">
         <label>Prénom</label>
-        <input type="text" name="prenom" required>
+        <input type="text" name="prenom" required minlength="2">
       </div>
 
       <div class="inputBox">
@@ -49,103 +43,93 @@
 
       <div class="inputBox">
         <label>Date de naissance</label>
-        <input type="date" name="naissance" required>
+        <input type="date" name="naissance" required max="2015-01-01">
       </div>
-
     </div>
 
     <div class="inputBox">
       <label>Lieu de naissance</label>
-      <input type="text" name="lieu" required>
+      <input type="text" name="lieu" required minlength="2">
     </div>
 
     <div class="inputBox">
       <label>Adresse complète</label>
-      <textarea name="adresse" rows="2"></textarea>
+      <textarea name="adresse" rows="2" placeholder="Ex : #5, rue X, commune, ville"></textarea>
     </div>
 
     <div class="grid">
-
       <div class="inputBox">
         <label>Téléphone</label>
-        <input type="tel" name="telephone" required>
+        <input type="tel" name="telephone" required placeholder="+509 XXXX XXXX">
       </div>
 
       <div class="inputBox">
-        <label>Email</label>
-        <input type="email" name="email">
+        <label>Email (facultatif)</label>
+        <input type="email" name="email" placeholder="exemple@email.com">
       </div>
-
     </div>
 
     <h3>Choisissez votre option</h3>
 
     <div class="options">
-
       <label>
         <input type="radio" name="option" value="Cuisine et Pâtisserie" required>
-        👨🏽‍🍳 Cuisine et Pâtisserie
-        <span>6 mois</span>
+        👨🏽‍🍳 Cuisine et Pâtisserie <span>6 mois</span>
       </label>
 
       <label>
         <input type="radio" name="option" value="Décoration de gâteau">
-        🎂 Décoration de gâteau
-        <span>3 mois</span>
+        🎂 Décoration de gâteau <span>3 mois</span>
       </label>
 
       <label>
         <input type="radio" name="option" value="Art culinaire">
-        🍽️ Art culinaire
-        <span>10 mois</span>
+        🍽️ Art culinaire <span>10 mois</span>
       </label>
 
       <label>
         <input type="radio" name="option" value="Cuisine, Pâtisserie et Protocole">
-        👔 Cuisine, Pâtisserie et Protocole
-        <span>3 mois</span>
+        👔 Cuisine, Pâtisserie et Protocole <span>3 mois</span>
       </label>
 
       <label>
         <input type="radio" name="option" value="Informatique bureautique côté entreprise">
-        💻 Informatique bureautique côté entreprise
-        <span>6 mois</span>
+        💻 Informatique bureautique côté entreprise <span>6 mois</span>
         <small>Informatique de base • Excel • Développement Web • Python • Réseaux & Sécurité</small>
       </label>
-
     </div>
 
     <h3>Parent ou tuteur</h3>
 
     <div class="grid">
-
       <div class="inputBox">
         <label>Nom du parent</label>
-        <input type="text" name="parent" required>
+        <input type="text" name="parent" required minlength="2">
       </div>
 
       <div class="inputBox">
         <label>Téléphone du parent</label>
-        <input type="tel" name="tel_parent" required>
+        <input type="tel" name="tel_parent" required placeholder="+509 XXXX XXXX">
       </div>
-
     </div>
 
     <div class="inputBox">
-
       <label>Photo de la pièce d'identité</label>
+      <input type="file" id="photo" accept="image/*" required>
 
-      <input
-        type="file"
-        id="photo"
-        accept="image/*"
-        required>
-
+      <!-- Prévisualisation -->
+      <div id="preview-container" style="display:none;">
+        <img id="preview-img" alt="Aperçu de la photo">
+        <p id="preview-info"></p>
+      </div>
     </div>
 
-    <button type="submit" class="btn">
+    <button type="submit" class="btn" id="btn-submit">
       S'INSCRIRE
     </button>
+
+    <!-- Zone de message succès/erreur -->
+    <div id="message" style="display:none;"></div>
 
   </form>
 
