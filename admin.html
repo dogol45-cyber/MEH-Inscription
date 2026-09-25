@@ -38,6 +38,75 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: #
   border-bottom: 2px solid #8B0000; padding-bottom: 10px;
 }
 
+/* ============ STATISTIQUES ============ */
+.stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 15px !important;
+  margin-bottom: 25px !important;
+  width: 100%;
+}
+.stat-card {
+  background: linear-gradient(135deg, #8B0000, #A50000) !important;
+  color: white !important;
+  padding: 20px 15px !important;
+  border-radius: 12px !important;
+  text-align: center !important;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2) !important;
+  transition: transform 0.2s;
+}
+.stat-card:hover { transform: translateY(-3px); }
+.stat-icon { font-size: 2rem !important; margin-bottom: 5px !important; display: block !important; }
+.stat-value { font-size: 2rem !important; font-weight: bold !important; line-height: 1 !important; display: block !important; color: white !important; }
+.stat-label { font-size: 0.85rem !important; opacity: 0.9 !important; margin-top: 5px !important; display: block !important; color: white !important; }
+
+.stats-options {
+  margin-top: 0 !important;
+  margin-bottom: 25px !important;
+  padding: 20px !important;
+  background: #fafafa !important;
+  border-radius: 12px !important;
+  border: 1px solid #eee !important;
+}
+.stats-options h3 {
+  color: #8B0000 !important;
+  margin-bottom: 15px !important;
+  border-bottom: 2px solid #8B0000 !important;
+  padding-bottom: 8px !important;
+  margin-top: 0 !important;
+  font-size: 1.05rem !important;
+}
+.stat-bar-container { margin-bottom: 12px !important; }
+.stat-bar-label {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 5px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+.stat-bar {
+  height: 22px !important;
+  background: #eee !important;
+  border-radius: 11px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+}
+.stat-bar-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #8B0000, #c62828) !important;
+  color: white !important;
+  padding: 0 10px !important;
+  font-size: 0.8rem !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  border-radius: 11px !important;
+  transition: width 0.5s ease;
+  min-width: 30px !important;
+  box-sizing: border-box !important;
+}
+
 /* ============ TABLEAU ============ */
 table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); }
 th { background: #8B0000; color: white; padding: 12px; font-size: 0.95rem; text-align: center; }
@@ -122,6 +191,15 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
   font-weight: bold; color: #8B0000; cursor: pointer; line-height: 1;
 }
 .modal-content .close:hover { color: #c62828; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 700px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .stat-value { font-size: 1.5rem !important; }
+  .stat-icon { font-size: 1.5rem !important; }
+  .container { margin: 15px; padding: 20px; }
+  .hero h1 { font-size: 1.25rem; }
+}
 </style>
 </head>
 <body>
@@ -161,7 +239,8 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
 
   <div class="container">
     <h2>Étudiants inscrits</h2>
-        <!-- ============ STATISTIQUES ============ -->
+
+    <!-- STATISTIQUES -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon">👥</div>
@@ -189,8 +268,9 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
       <h3>📊 Répartition par option</h3>
       <div id="stats-par-option"></div>
     </div>
-    <!-- ============ FIN STATISTIQUES ============ -->
+
     <input type="text" id="recherche" placeholder="🔎 Rechercher..." style="margin-bottom: 15px;">
+
     <table id="table">
       <thead>
         <tr>
@@ -233,7 +313,6 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
   </div>
 </div>
 
-<!-- ============ SCRIPT DE CONNEXION ============ -->
 <script>
 function getToken() { return localStorage.getItem("meh_token"); }
 function setToken(t) { localStorage.setItem("meh_token", t); }
@@ -284,7 +363,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
-<script src="admin.js"></script>
+<script src="admin.js?v=11"></script>
 
 </body>
 </html>
