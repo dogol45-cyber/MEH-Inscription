@@ -748,3 +748,116 @@ tr:hover td {
     font-size: 1.5rem;
   }
 }
+
+/* ================================
+   STATISTIQUES ADMIN
+   ================================ */
+.stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 15px !important;
+  margin-bottom: 30px !important;
+  width: 100%;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #8B0000, #A50000) !important;
+  color: white !important;
+  padding: 20px 15px !important;
+  border-radius: 12px !important;
+  text-align: center !important;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2) !important;
+  transition: transform 0.2s;
+  display: block !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-icon {
+  font-size: 2rem !important;
+  margin-bottom: 5px !important;
+  display: block !important;
+}
+
+.stat-value {
+  font-size: 2rem !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+  display: block !important;
+  color: white !important;
+}
+
+.stat-label {
+  font-size: 0.85rem !important;
+  opacity: 0.9 !important;
+  margin-top: 5px !important;
+  display: block !important;
+  color: white !important;
+}
+
+.stats-options {
+  margin-top: 25px !important;
+  padding: 20px !important;
+  background: #fafafa !important;
+  border-radius: 12px !important;
+  border: 1px solid #eee !important;
+  display: block !important;
+}
+
+.stats-options h3 {
+  color: #8B0000 !important;
+  margin-bottom: 15px !important;
+  border-bottom: 2px solid #8B0000 !important;
+  padding-bottom: 8px !important;
+  margin-top: 0 !important;
+  font-size: 1.05rem !important;
+  display: block !important;
+}
+
+.stat-bar-container {
+  margin-bottom: 12px !important;
+  display: block !important;
+}
+
+.stat-bar-label {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 5px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+.stat-bar {
+  height: 22px !important;
+  background: #eee !important;
+  border-radius: 11px !important;
+  overflow: hidden !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+.stat-bar-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #8B0000, #c62828) !important;
+  color: white !important;
+  padding: 0 10px !important;
+  font-size: 0.8rem !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  border-radius: 11px !important;
+  transition: width 0.5s ease;
+  min-width: 30px !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .stat-value { font-size: 1.5rem !important; }
+  .stat-icon { font-size: 1.5rem !important; }
+}
