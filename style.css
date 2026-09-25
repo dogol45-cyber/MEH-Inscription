@@ -441,3 +441,70 @@
   font-size: 0.85rem;
   background: #444;
 }
+/* ================================
+   PRÉVISUALISATION PHOTO
+   ================================ */
+#preview-container {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fafafa;
+  border: 2px dashed #8B0000;
+  border-radius: 10px;
+  text-align: center;
+  animation: fadeInMessage 0.3s ease;
+}
+
+#preview-img {
+  display: block;
+  margin: 0 auto 10px auto;
+  max-width: 220px;
+  max-height: 220px;
+  border-radius: 8px;
+  border: 2px solid #8B0000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+#preview-info {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ================================
+   MESSAGE DE SUCCÈS / ERREUR
+   ================================ */
+#message {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 1.6;
+  animation: fadeInMessage 0.3s ease;
+}
+
+#message.success {
+  background: #e6f4ea;
+  color: #1e7e34;
+  border: 2px solid #1e7e34;
+}
+
+#message.error {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 2px solid #b71c1c;
+}
+
+@keyframes fadeInMessage {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================
+   BOUTON EN CHARGEMENT
+   ================================ */
+.btn:disabled {
+  background: #999 !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
