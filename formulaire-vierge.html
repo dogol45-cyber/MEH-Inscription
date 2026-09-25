@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulaire d'inscription vierge - MEH</title>
+<style>
+/* ============ BASE ============ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f4f4f4;
+  color: #222;
+  line-height: 1.5;
+  padding: 20px;
+}
+
+.barre-actions {
+  max-width: 210mm;
+  margin: 0 auto 20px auto;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-imprimer {
+  flex: 1;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #8B0000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-imprimer:hover { background: #A50000; }
+
+.btn-retour {
+  padding: 14px 20px;
+  font-size: 1rem;
+  background: #666;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* ============ FEUILLE A4 ============ */
+.feuille {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: white;
+  padding: 15mm 15mm;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* ============ EN-TÊTE ============ */
+.entete {
+  background: linear-gradient(135deg, #8B0000, #A50000);
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.entete img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+  margin-bottom: 8px;
+}
+
+.entete h1 {
+  font-size: 1.3rem;
+  margin-bottom: 3px;
+}
+
+.entete p {
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+.titre-form {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #8B0000;
+  margin: 15px 0;
+  padding: 8px;
+  border-bottom: 2px solid #8B0000;
+}
+
+/* ============ SECTIONS ============ */
+.section {
+  margin-bottom: 15px;
+}
+
+.section-titre {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: #8B0000;
+  margin-bottom: 8px;
+  padding-bottom: 3px;
+  border-bottom: 1px dashed #ccc;
+}
+
+/* ============ LIGNES A REMPLIR ============ */
+.ligne {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.ligne label {
+  font-weight: 600;
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.ligne .champ {
+  flex: 1;
+  border-bottom: 1px solid #333;
+  height: 22px;
+}
+
+.ligne-courte {
+  display: flex;
+  gap: 20px;
+}
+
+.ligne-courte > div {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.ligne-courte label {
+  font-weight: 600;
+  width: 100px;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.ligne-courte .champ {
+  flex: 1;
+  border-bottom: 1px solid #333;
+  height: 22px;
+}
+
+/* ============ CASE PHOTO ============ */
+.photo-zone {
+  float: right;
+  width: 100px;
+  height: 120px;
+  border: 2px dashed #8B0000;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #8B0000;
+  padding: 5px;
+  margin-left: 15px;
+  margin-bottom: 10px;
+}
+
+/* ============ OPTIONS ============ */
+.options-liste {
+  margin-top: 5px;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+  font-size: 0.82rem;
+}
+
+.option-item .case {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid #333;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.option-item .nom {
+  flex: 1;
+}
+
+.option-item .duree {
+  font-style: italic;
+  color: #666;
+  font-size: 0.75rem;
+  margin-left: 10px;
+}
+
+/* ============ ZONE SIGNATURE ============ */
+.signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 30px;
+}
+
+.signature-box {
+  flex: 1;
+  text-align: center;
+}
+
+.signature-box .titre {
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.signature-box .ligne-signature {
+  border-bottom: 1px solid #333;
+  height: 60px;
+  margin-top: 5px;
+}
+
+.signature-box .label {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* ============ PIED DE PAGE ============ */
+.pied {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}
+
+/* ============ IMPRESSION ============ */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+    margin: 0;
+  }
+  .barre-actions { display: none !important; }
+  .feuille {
+    box-shadow: none;
+    margin: 0;
+    padding: 10mm 12mm;
+    width: 100%;
+    min-height: auto;
+    page-break-inside: avoid;
+  }
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  .feuille {
+    width: 100%;
+    min-height: auto;
+    padding: 15px;
+  }
+  .barre-actions { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="barre-actions">
+  <button class="btn-imprimer" onclick="window.print()">🖨️ Imprimer ce formulaire</button>
+  <a href="/admin.html" class="btn-retour">← Retour à l'admin</a>
+</div>
+
+<div class="feuille">
+
+  <!-- EN-TÊTE -->
+  <div class="entete">
+    <img src="logo.png" alt="Logo MEH">
+    <h1>MARANATHA ÉCOLE HÔTELIÈRE & SERVICE TRAITEUR</h1>
+    <p>Former pour agir</p>
+  </div>
+
+  <div class="titre-form">FORMULAIRE D'INSCRIPTION</div>
+
+  <!-- PHOTO -->
+  <div class="photo-zone">
+    Coller ici<br>la photo<br>d'identité
+  </div>
+
+  <!-- INFOS PERSONNELLES -->
+  <div class="section">
+    <div class="section-titre">📋 INFORMATIONS PERSONNELLES</div>
+
+    <div class="ligne">
+      <label>Nom :</label>
+      <div class="champ"></div>
+    </div>
+
+    <div class="ligne">
+      <label>Prénom :</label>
+      <div class="champ"></div>
+    </div>
+
+    <div class="ligne-courte" style="margin-bottom:10px;">
+      <div>
+        <label>Sexe :</label>
+        <div class="champ"></div>
+      </div>
+      <div>
+        <label>Date de naissance :</label>
+        <div class="champ"></div>
+      </div>
+    </div>
+
+    <div class="ligne">
+      <label>Lieu de naissance :</label>
+      <div class="champ"></div>
+    </div>
+
+    <div class="ligne">
+      <label>Adresse complète :</label>
+      <div class="champ"></div>
+    </div>
+
+    <div class="ligne-courte">
+      <div>
+        <label>Téléphone :</label>
+        <div class="champ"></div>
+      </div>
+      <div>
+        <label>Email :</label>
+        <div class="champ"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIONS DE FORMATION -->
+  <div class="section">
+    <div class="section-titre">🎓 FORMATION CHOISIE (cochez une case)</div>
+
+    <div class="options-liste">
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">👨‍🍳 Cuisine et Pâtisserie</div>
+        <div class="duree">6 mois</div>
+      </div>
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">🎂 Décoration de gâteau</div>
+        <div class="duree">3 mois</div>
+      </div>
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">🍽️ Art culinaire</div>
+        <div class="duree">10 mois</div>
+      </div>
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">👔 Cuisine, Pâtisserie et Protocole</div>
+        <div class="duree">3 mois</div>
+      </div>
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">💻 Informatique bureautique côté entreprise</div>
+        <div class="duree">6 mois</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARENT / TUTEUR -->
+  <div class="section">
+    <div class="section-titre">👨‍👩‍👦 PARENT OU TUTEUR</div>
+
+    <div class="ligne">
+      <label>Nom du parent :</label>
+      <div class="champ"></div>
+    </div>
+
+    <div class="ligne">
+      <label>Téléphone :</label>
+      <div class="champ"></div>
+    </div>
+  </div>
+
+  <!-- PIÈCES À FOURNIR -->
+  <div class="section">
+    <div class="section-titre">📎 PIÈCES À FOURNIR</div>
+
+    <div class="options-liste">
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">Copie de la pièce d'identité</div>
+      </div>
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">2 photos d'identité récentes</div>
+      </div>
+      <div class="option-item">
+        <div class="case"></div>
+        <div class="nom">Frais d'inscription : <strong>1 500 gourdes</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="signatures">
+    <div class="signature-box">
+      <div class="titre">Signature de l'étudiant</div>
+      <div class="ligne-signature"></div>
+      <div class="label">Date : ____ / ____ / ________</div>
+    </div>
+    <div class="signature-box">
+      <div class="titre">Signature du parent / tuteur</div>
+      <div class="ligne-signature"></div>
+      <div class="label">Date : ____ / ____ / ________</div>
+    </div>
+  </div>
+
+  <div class="pied">
+    Maranatha École Hôtelière & Service Traiteur — Formulaire d'inscription officiel
+  </div>
+
+</div>
+
+</body>
+</html>
