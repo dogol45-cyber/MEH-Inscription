@@ -1,6 +1,10 @@
-// API : suppression d'une inscription
+import { verifierSession, nonAutorise } from "../_utils/auth.js";
+
 export async function onRequestPost({ request, env }) {
   try {
+    const session = await verifierSession(request, env);
+    if (!session) return nonAutorise();
+
     const { id } = await request.json();
 
     if (!id) {
@@ -14,9 +18,6 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ success: true, message: "Inscription supprimée" });
 
   } catch (err) {
-    return Response.json(
-      { error: err.message || "Erreur serveur" },
-      { status: 500 }
-    );
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
