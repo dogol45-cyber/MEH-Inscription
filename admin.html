@@ -161,6 +161,35 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
 
   <div class="container">
     <h2>Étudiants inscrits</h2>
+        <!-- ============ STATISTIQUES ============ -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-label">Inscrits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👨</div>
+        <div class="stat-value" id="stat-hommes">—</div>
+        <div class="stat-label">Hommes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👩</div>
+        <div class="stat-value" id="stat-femmes">—</div>
+        <div class="stat-label">Femmes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value" id="stat-mois">—</div>
+        <div class="stat-label">Ce mois-ci</div>
+      </div>
+    </div>
+
+    <div class="stats-options">
+      <h3>📊 Répartition par option</h3>
+      <div id="stats-par-option"></div>
+    </div>
+    <!-- ============ FIN STATISTIQUES ============ -->
     <input type="text" id="recherche" placeholder="🔎 Rechercher..." style="margin-bottom: 15px;">
     <table id="table">
       <thead>
