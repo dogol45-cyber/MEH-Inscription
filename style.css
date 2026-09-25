@@ -106,3 +106,111 @@
   padding: 6px 15px;
   font-size: 0.85rem;
 }
+/* ================================
+   ÉCRAN DE CONNEXION
+   ================================ */
+.ecran-connexion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8B0000, #A50000);
+  padding: 20px;
+}
+
+.login-box {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.login-box .logo {
+  width: 100px !important;
+  height: 100px !important;
+  object-fit: contain;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+  border: 3px solid #8B0000;
+}
+
+.login-box h1 {
+  color: #8B0000;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.login-box p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.login-box form {
+  text-align: left;
+}
+
+.login-box label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.login-box input:focus {
+  outline: none;
+  border-color: #8B0000;
+  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+}
+
+.login-box button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+
+.login-erreur {
+  color: #c62828;
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+.user-bar {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.user-bar span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.user-bar button {
+  padding: 6px 15px;
+  font-size: 0.85rem;
+}
