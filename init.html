@@ -2,87 +2,44 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Création du compte admin</title>
+<title>Test API</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #8B0000, #A50000);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 20px;
-  }
-  .box {
-    background: white;
-    padding: 40px;
-    border-radius: 15px;
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  }
-  h1 { color: #8B0000; margin-top: 0; }
-  p { color: #444; line-height: 1.6; }
-  button {
-    background: #8B0000;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 20px;
-    width: 100%;
-  }
+  body { font-family: Arial; padding: 30px; background: #f4f4f4; }
+  h1 { color: #8B0000; }
+  button { padding: 12px 24px; font-size: 1rem; margin: 10px 5px; cursor: pointer;
+           background: #8B0000; color: white; border: none; border-radius: 8px; }
   button:hover { background: #A50000; }
-  button:disabled { background: #999; cursor: not-allowed; }
-  #resultat {
-    margin-top: 25px;
-    padding: 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    min-height: 20px;
-  }
-  .ok { background: #e6f4ea; color: #1e7e34; border: 2px solid #1e7e34; }
-  .erreur { background: #fdecea; color: #b71c1c; border: 2px solid #b71c1c; }
-  .info { background: #e3f2fd; color: #0d47a1; border: 2px solid #0d47a1; }
-  ul { text-align: left; background: #f9f9f9; padding: 15px 30px; border-radius: 8px; }
-  li { padding: 5px 0; }
+  pre { background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;
+        overflow: auto; max-height: 400px; margin-top: 20px; }
+  .ok { color: green; font-weight: bold; }
+  .err { color: red; font-weight: bold; }
 </style>
 </head>
 <body>
-<div class="box">
-  <h1>🔐 Création du premier utilisateur</h1>
-  <p>Clique sur le bouton ci-dessous pour créer le compte administrateur.</p>
+<h1>Test des APIs</h1>
 
-  <ul>
-    <li>👤 Nom d'utilisateur : <strong>admin</strong></li>
-    <li>🔑 Mot de passe : <strong>mehadmin1234</strong></li>
-    <li>📛 Nom complet : <strong>Administrateur MEH</strong></li>
-  </ul>
+<h2>1. Créer l'admin</h2>
+<button onclick="testInit()">Créer admin</button>
 
-  <button id="btn" onclick="creer()">✨ Créer le compte admin</button>
+<h2>2. Tester la connexion</h2>
+<button onclick="testAuth()">Tester /api/auth</button>
 
-  <div id="resultat"></div>
+<h2>3. Vérifier mes APIs</h2>
+<button onclick="testListe()">Tester /api/liste (doit refuser)</button>
 
-  <p style="margin-top:25px;font-size:0.85rem;color:#888;">
-    ⚠️ Après la création, supprime ce fichier <code>init.html</code> de ton dépôt GitHub pour la sécurité.
-  </p>
-</div>
+<h2>Résultat :</h2>
+<pre id="resultat">Clique sur un bouton ci-dessus...</pre>
 
 <script>
-async function creer() {
-  const btn = document.getElementById("btn");
-  const res = document.getElementById("resultat");
+const res = document.getElementById("resultat");
 
-  btn.disabled = true;
-  btn.textContent = "⏳ Création en cours...";
-  res.className = "";
-  res.textContent = "";
+function afficher(texte, ok) {
+  res.innerHTML = (ok ? '<span class="ok">✅ SUCCÈS</span>' : '<span class="err">❌ ÉCHEC</span>')
+    + "\n\n" + texte;
+}
 
+async function testInit() {
+  res.textContent = "En cours...";
   try {
     const r = await fetch("/api/init", {
       method: "POST",
@@ -93,25 +50,40 @@ async function creer() {
         nom_complet: "Administrateur MEH"
       })
     });
-
     const data = await r.json();
-
-    if (r.ok && data.success) {
-      res.className = "ok";
-      res.innerHTML = "✅ " + data.message + "<br><br>👉 <a href='/admin.html'>Aller à la page de connexion</a>";
-    } else {
-      res.className = "info";
-      res.innerHTML = "ℹ️ " + (data.error || "Message inconnu") +
-        "<br><br>👉 <a href='/admin.html'>Aller à la page de connexion</a>";
-    }
-
-  } catch (err) {
-    res.className = "erreur";
-    res.textContent = "❌ Erreur réseau : " + err.message;
+    afficher("Status: " + r.status + "\nRéponse:\n" + JSON.stringify(data, null, 2), r.ok);
+  } catch (e) {
+    afficher("Erreur: " + e.message, false);
   }
+}
 
-  btn.disabled = false;
-  btn.textContent = "✨ Créer le compte admin";
+async function testAuth() {
+  res.textContent = "En cours...";
+  try {
+    const r = await fetch("/api/auth", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        username: "admin",
+        password: "mehadmin1234"
+      })
+    });
+    const data = await r.json();
+    afficher("Status: " + r.status + "\nRéponse:\n" + JSON.stringify(data, null, 2), r.ok);
+  } catch (e) {
+    afficher("Erreur: " + e.message, false);
+  }
+}
+
+async function testListe() {
+  res.textContent = "En cours...";
+  try {
+    const r = await fetch("/api/liste");
+    const texte = await r.text();
+    afficher("Status: " + r.status + " (doit être 401)\nRéponse:\n" + texte, r.status === 401);
+  } catch (e) {
+    afficher("Erreur: " + e.message, false);
+  }
 }
 </script>
 </body>
