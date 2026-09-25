@@ -61,6 +61,7 @@ async function charger() {
     const data = await r.json();
     toutesLesInscriptions = Array.isArray(data) ? data : [];
     afficher(toutesLesInscriptions);
+    chargerStats(toutesLesInscriptions);
 
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="7" style="color:red">Erreur : ${err.message}</td></tr>`;
@@ -366,5 +367,72 @@ function getImageDimensions(dataUrl) {
     img.onload = () => resolve({ w: img.width, h: img.height });
     img.onerror = () => resolve(null);
     img.src = dataUrl;
+  });
+}
+
+// ================================
+// STATISTIQUES
+// ================================
+function chargerStats(liste) {
+  const total = liste.length;
+
+  const hommes = liste.filter(e => (e.sexe || "").toLowerCase() === "masculin").length;
+  const femmes = liste.filter(e => (e.sexe || "").toLowerCase() === "féminin").length;
+
+  const maintenant = new Date();
+  const moisActuel = maintenant.getMonth();
+  const anneeActuelle = maintenant.getFullYear();
+  const ceMois = liste.filter(e => {
+    if (!e.date_inscription) return false;
+    const d = new Date(e.date_inscription);
+    return d.getMonth() === moisActuel && d.getFullYear() === anneeActuelle;
+  }).length;
+
+  const elTotal = document.getElementById("stat-total");
+  const elH = document.getElementById("stat-hommes");
+  const elF = document.getElementById("stat-femmes");
+  const elM = document.getElementById("stat-mois");
+
+  if (elTotal) elTotal.textContent = total;
+  if (elH) elH.textContent = hommes;
+  if (elF) elF.textContent = femmes;
+  if (elM) elM.textContent = ceMois;
+
+  // Répartition par option
+  const parOption = {};
+  liste.forEach(e => {
+    const opt = e.option_formation || "Non renseignée";
+    parOption[opt] = (parOption[opt] || 0) + 1;
+  });
+
+  const container = document.getElementById("stats-par-option");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (total === 0) {
+    container.innerHTML = "<p style='color:#888'>Aucune donnée pour le moment.</p>";
+    return;
+  }
+
+  const entrees = Object.entries(parOption).sort((a, b) => b[1] - a[1]);
+  const max = entrees[0][1];
+
+  entrees.forEach(([option, nombre]) => {
+    const pourcent = Math.round((nombre / total) * 100);
+    const largeurBarre = Math.round((nombre / max) * 100);
+
+    const div = document.createElement("div");
+    div.className = "stat-bar-container";
+    div.innerHTML = `
+      <div class="stat-bar-label">
+        <span>${option}</span>
+        <span>${nombre} (${pourcent}%)</span>
+      </div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill" style="width: ${largeurBarre}%">${nombre}</div>
+      </div>
+    `;
+    container.appendChild(div);
   });
 }
