@@ -1,6 +1,5 @@
 // ================================
-// ADMINISTRATION MEH — sans auto-chargement
-// (c'est admin.html qui gère la connexion)
+// ADMINISTRATION MEH
 // ================================
 
 let toutesLesInscriptions = [];
@@ -17,13 +16,12 @@ function authHeaders() {
 }
 
 // ================================
-// DÉCONNEXION (appelée depuis admin.html)
+// DÉCONNEXION
 // ================================
 async function deconnexion() {
   if (!confirm("Voulez-vous vous déconnecter ?")) return;
 
   const token = localStorage.getItem("meh_token");
-
   try {
     await fetch("/api/deconnexion", {
       method: "POST",
@@ -39,7 +37,7 @@ async function deconnexion() {
 }
 
 // ================================
-// CHARGEMENT DE LA LISTE (READ)
+// CHARGEMENT DE LA LISTE
 // ================================
 async function charger() {
   const tbody = document.querySelector("tbody");
@@ -124,7 +122,7 @@ document.addEventListener("input", (ev) => {
 });
 
 // ================================
-// MODAL : OUVRIR
+// MODAL
 // ================================
 function ouvrirModal(jsonSafe) {
   const e = JSON.parse(decodeURIComponent(jsonSafe));
@@ -155,7 +153,7 @@ window.addEventListener("click", (ev) => {
 });
 
 // ================================
-// SAUVEGARDER MODIFICATION (UPDATE)
+// SAUVEGARDER MODIFICATION
 // ================================
 async function sauvegarderModif(ev) {
   ev.preventDefault();
@@ -195,7 +193,7 @@ async function sauvegarderModif(ev) {
 }
 
 // ================================
-// SUPPRIMER (DELETE)
+// SUPPRIMER
 // ================================
 async function supprimer(id, nom) {
   const ok = confirm(`⚠️ Supprimer définitivement l'inscription de "${nom}" ?`);
@@ -220,14 +218,9 @@ async function supprimer(id, nom) {
 }
 
 // ================================
-// PDF — photo en haut à droite
+// DESSINER UNE FICHE (utilisé par pdf et imprimerTout)
 // ================================
-async function pdf(jsonSafe) {
-  const e = JSON.parse(decodeURIComponent(jsonSafe));
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const ROUGE = [139, 0, 0];
-
+async function dessinerFiche(doc, e, ROUGE) {
   doc.setFillColor(...ROUGE);
   doc.rect(0, 0, 210, 30, "F");
   doc.setTextColor(255, 255, 255);
@@ -357,10 +350,125 @@ async function pdf(jsonSafe) {
     ? new Date(e.date_inscription).toLocaleDateString("fr-FR")
     : new Date().toLocaleDateString("fr-FR");
   doc.text("Inscrit le " + dateInsc, 105, 291, { align: "center" });
+}
+
+// ================================
+// PDF INDIVIDUEL
+// ================================
+async function pdf(jsonSafe) {
+  const e = JSON.parse(decodeURIComponent(jsonSafe));
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const ROUGE = [139, 0, 0];
+
+  await dessinerFiche(doc, e, ROUGE);
 
   doc.save((e.numero || "fiche") + ".pdf");
 }
 
+// ================================
+// IMPRIMER TOUS (PDF GLOBAL)
+// ================================
+async function imprimerTout() {
+  if (!toutesLesInscriptions || toutesLesInscriptions.length === 0) {
+    alert("⚠️ Aucune inscription à imprimer.");
+    return;
+  }
+
+  const btn = document.getElementById("btn-print-all");
+  const texteOriginal = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "⏳ Génération en cours...";
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const ROUGE = [139, 0, 0];
+    const liste = toutesLesInscriptions;
+
+    // ==================== PAGE 1 : RÉCAPITULATIF ====================
+    doc.setFillColor(...ROUGE);
+    doc.rect(0, 0, 210, 30, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("MARANATHA ÉCOLE HÔTELIÈRE", 105, 13, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("& SERVICE TRAITEUR", 105, 21, { align: "center" });
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.text("LISTE DES ÉTUDIANTS INSCRITS", 105, 45, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Total : " + liste.length + " inscrit(s)", 20, 55);
+    const dateGen = new Date().toLocaleDateString("fr-FR") + " à " + new Date().toLocaleTimeString("fr-FR").substring(0, 5);
+    doc.text("Généré le : " + dateGen, 20, 60);
+
+    // En-tête du tableau
+    let y = 72;
+    doc.setFillColor(...ROUGE);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.rect(15, y - 5, 180, 8, "F");
+    doc.text("N°", 20, y);
+    doc.text("Numéro", 30, y);
+    doc.text("Nom", 75, y);
+    doc.text("Prénom", 110, y);
+    doc.text("Téléphone", 145, y);
+    doc.text("Option", 165, y);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "normal");
+    y += 8;
+
+    liste.forEach((e, i) => {
+      if (y > 265) {
+        doc.addPage();
+        y = 25;
+      }
+
+      if (i % 2 === 0) {
+        doc.setFillColor(250, 245, 245);
+        doc.rect(15, y - 4, 180, 7, "F");
+      }
+
+      doc.setFontSize(8);
+      doc.text(String(i + 1), 20, y);
+      doc.text(String(e.numero || "").substring(0, 22), 30, y);
+      doc.text(String(e.nom || "").substring(0, 20), 75, y);
+      doc.text(String(e.prenom || "").substring(0, 20), 110, y);
+      doc.text(String(e.telephone || ""), 145, y);
+      doc.text(String(e.option_formation || "").substring(0, 22), 165, y);
+      y += 7;
+    });
+
+    // ==================== PAGES SUIVANTES : UNE FICHE PAR ÉTUDIANT ====================
+    for (const e of liste) {
+      doc.addPage();
+      await dessinerFiche(doc, e, ROUGE);
+    }
+
+    // Sauvegarder
+    const dateFichier = new Date().toISOString().substring(0, 10);
+    doc.save("MEH-liste-complete-" + dateFichier + ".pdf");
+
+  } catch (err) {
+    alert("❌ Erreur lors de la génération : " + err.message);
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = texteOriginal;
+  }
+}
+
+// ================================
+// DIMENSIONS IMAGE
+// ================================
 function getImageDimensions(dataUrl) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -398,7 +506,6 @@ function chargerStats(liste) {
   if (elF) elF.textContent = femmes;
   if (elM) elM.textContent = ceMois;
 
-  // Répartition par option
   const parOption = {};
   liste.forEach(e => {
     const opt = e.option_formation || "Non renseignée";
