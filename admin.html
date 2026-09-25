@@ -256,7 +256,7 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
 <div id="ecran-chargement" class="ecran-chargement">
   <img src="logo.png" alt="Logo MEH">
   <div class="spinner"></div>
-  <p>Vérification en cours...</p>
+  <p>Chargement...</p>
 </div>
 
 <!-- ============ ÉCRAN DE CONNEXION (caché au départ) ============ -->
@@ -376,7 +376,6 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
 </div>
 
 <script>
-function getToken() { return localStorage.getItem("meh_token"); }
 function setToken(t) { localStorage.setItem("meh_token", t); }
 function supprimerToken() { localStorage.removeItem("meh_token"); }
 
@@ -437,47 +436,23 @@ document.getElementById("form-connexion").addEventListener("submit", async funct
   }
 });
 
-// ===== Vérification au démarrage =====
-window.addEventListener("DOMContentLoaded", async () => {
-  const token = getToken();
+// ===== AU CHARGEMENT : FORCER LA CONNEXION =====
+window.addEventListener("DOMContentLoaded", () => {
+  // On supprime toujours le token pour forcer la reconnexion
+  supprimerToken();
 
-  // Aucun token → afficher la connexion
-  if (!token) {
+  // Petit délai pour laisser l'écran de chargement s'afficher brièvement
+  setTimeout(() => {
     afficherConnexion();
-    return;
-  }
 
-  // Token présent → vérifier auprès du serveur
-  try {
-    const r = await fetch("/api/verifier", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
-    });
-
-    if (!r.ok) {
-      supprimerToken();
-      afficherConnexion();
-      return;
-    }
-
-    const res = await r.json();
-    if (!res.valide) {
-      supprimerToken();
-      afficherConnexion();
-      return;
-    }
-
-    // Token valide → afficher l'app directement
-    afficherApp(res.user);
-
-  } catch (e) {
-    supprimerToken();
-    afficherConnexion();
-  }
+    // Focus automatique sur le champ username
+    const input = document.getElementById("login-username");
+    if (input) input.focus();
+  }, 400);
 });
 </script>
 
-<script src="admin.js?v=13"></script>
+<script src="admin.js?v=14"></script>
 
 </body>
 </html>
