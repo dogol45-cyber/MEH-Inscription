@@ -1,392 +1,108 @@
 /* ================================
-   MARANATHA ÉCOLE HÔTELIÈRE
-   Feuille de style complète
+   ÉCRAN DE CONNEXION
    ================================ */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.ecran-connexion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8B0000, #A50000);
+  padding: 20px;
 }
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f4f4;
-    color: #222;
-    line-height: 1.6;
+.login-box {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 15px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
-/* ---------- En-tête ---------- */
-.hero {
-    background: linear-gradient(135deg, #8B0000, #A50000);
-    color: white;
-    text-align: center;
-    padding: 30px 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.login-box .logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  background: white;
+  padding: 5px;
+  border: 3px solid #8B0000;
 }
 
-.hero .logo {
-    max-width: 110px;
-    height: auto;
-    margin-bottom: 10px;
-    border-radius: 50%;
-    background: white;
-    padding: 5px;
+.login-box h1 {
+  color: #8B0000;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
 }
 
-.hero h1 {
-    font-size: 1.6rem;
-    margin-bottom: 5px;
+.login-box p {
+  color: #666;
+  margin-bottom: 25px;
 }
 
-.hero p {
-    font-size: 0.95rem;
-    opacity: 0.9;
+.login-box form {
+  text-align: left;
 }
 
-/* ---------- Conteneur principal ---------- */
-.container {
-    max-width: 900px;
-    margin: 30px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+.login-box label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
 }
 
-.container h2 {
-    color: #8B0000;
-    margin-bottom: 20px;
-    text-align: center;
-    border-bottom: 2px solid #8B0000;
-    padding-bottom: 10px;
+.login-box input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
 }
 
-/* ---------- Formulaire ---------- */
-form {
-    display: flex;
-    flex-direction: column;
+.login-box input:focus {
+  outline: none;
+  border-color: #8B0000;
+  box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
 }
 
-label {
-    margin-top: 15px;
-    font-weight: 600;
-    color: #333;
-    font-size: 0.95rem;
+.login-box button {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+  font-size: 1.05rem;
+  font-weight: bold;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="date"],
-input[type="number"],
-select,
-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border 0.2s;
+.login-erreur {
+  color: #c62828;
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 600;
+  min-height: 20px;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: #8B0000;
-    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+/* Barre utilisateur */
+.user-bar {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-textarea {
-    resize: vertical;
-    min-height: 70px;
+.user-bar span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
 }
 
-input[type="file"] {
-    margin-top: 5px;
-    font-size: 0.9rem;
-}
-
-/* ---------- Options de formation ---------- */
-.options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.options label {
-    display: flex;
-    align-items: center;
-    background: #fafafa;
-    padding: 12px 15px;
-    border: 2px solid #eee;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-    margin-top: 0;
-}
-
-.options label:hover {
-    border-color: #8B0000;
-    background: #fff5f5;
-}
-
-.options input[type="radio"] {
-    margin-right: 12px;
-    accent-color: #8B0000;
-    transform: scale(1.3);
-}
-
-/* ---------- Bouton d'envoi ---------- */
-button[type="submit"],
-.btn-submit {
-    margin-top: 25px;
-    background: #8B0000;
-    color: white;
-    border: none;
-    padding: 14px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: background 0.2s, transform 0.1s;
-}
-
-button[type="submit"]:hover,
-.btn-submit:hover {
-    background: #A50000;
-}
-
-button[type="submit"]:active {
-    transform: scale(0.98);
-}
-
-/* ---------- Bloc parent/tuteur ---------- */
-fieldset {
-    border: 2px dashed #ddd;
-    border-radius: 10px;
-    padding: 15px 20px;
-    margin-top: 20px;
-}
-
-fieldset legend {
-    color: #8B0000;
-    font-weight: bold;
-    padding: 0 10px;
-}
-
-/* ---------- Tableau administration ---------- */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-th {
-    background: #8B0000;
-    color: white;
-    padding: 12px;
-    font-size: 0.95rem;
-}
-
-td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
-}
-
-tr:hover td {
-    background: #fff5f5;
-}
-
-td, th {
-    text-align: center;
-}
-
-/* ---------- Boutons génériques ---------- */
-button {
-    background: #8B0000;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-    margin: 2px;
-}
-
-button:hover {
-    background: #A50000;
-}
-
-/* ---------- Boutons d'action dans le tableau ---------- */
-td button {
-    padding: 6px 10px;
-    font-size: 1rem;
-    margin: 2px;
-}
-
-/* ---------- Barre de recherche ---------- */
-#recherche {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border 0.2s;
-}
-
-#recherche:focus {
-    outline: none;
-    border-color: #8B0000;
-    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-/* ---------- Modal d'édition ---------- */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 550px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.modal-content h2 {
-    color: #8B0000;
-    margin-bottom: 20px;
-    text-align: center;
-    border-bottom: 2px solid #8B0000;
-    padding-bottom: 10px;
-}
-
-.modal-content label {
-    display: block;
-    margin-top: 12px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 4px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 0.95rem;
-}
-
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus {
-    outline: none;
-    border-color: #8B0000;
-    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
-}
-
-.modal-content .close {
-    position: absolute;
-    top: 12px;
-    right: 18px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #8B0000;
-    cursor: pointer;
-    line-height: 1;
-}
-
-.modal-content .close:hover {
-    color: #c62828;
-}
-
-/* ---------- Message de succès/erreur ---------- */
-.message {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 600;
-}
-
-.message.success {
-    background: #e6f4ea;
-    color: #1e7e34;
-    border: 1px solid #1e7e34;
-}
-
-.message.error {
-    background: #fdecea;
-    color: #b71c1c;
-    border: 1px solid #b71c1c;
-}
-
-/* ---------- Responsive (mobile) ---------- */
-@media (max-width: 600px) {
-    .container {
-        margin: 15px;
-        padding: 20px;
-    }
-
-    .hero h1 {
-        font-size: 1.25rem;
-    }
-
-    .hero p {
-        font-size: 0.85rem;
-    }
-
-    table {
-        font-size: 0.8rem;
-    }
-
-    th, td {
-        padding: 6px 4px;
-    }
-
-    td button {
-        padding: 4px 6px;
-        font-size: 0.85rem;
-    }
-
-    .modal-content {
-        padding: 20px;
-    }
+.user-bar button {
+  padding: 6px 15px;
+  font-size: 0.85rem;
 }
