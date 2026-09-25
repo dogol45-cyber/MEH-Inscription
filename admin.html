@@ -8,8 +8,11 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <style>
+/* Classe pour cacher un élément, gagne contre tout */
+.cachee { display: none !important; }
+
 .ecran-connexion {
-  display: flex !important;
+  display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
@@ -84,8 +87,8 @@
   </div>
 </div>
 
-<!-- ============ APPLICATION ============ -->
-<div id="app" style="display:none;">
+<!-- ============ APPLICATION (cachée au départ avec la classe) ============ -->
+<div id="app" class="cachee">
   <header class="hero">
     <img src="logo.png" class="logo" alt="Logo MEH">
     <h1>Administration MEH</h1>
@@ -141,24 +144,26 @@
   </div>
 </div>
 
-<!-- ============ SCRIPT DE CONNEXION (intégré) ============ -->
+<!-- ============ SCRIPT DE CONNEXION ============ -->
 <script>
-// ===== Gestion du token =====
 function getToken() { return localStorage.getItem("meh_token"); }
 function setToken(t) { localStorage.setItem("meh_token", t); }
 function supprimerToken() { localStorage.removeItem("meh_token"); }
 
+function afficherApp(user) {
+  document.getElementById("ecran-connexion").classList.add("cachee");
+  document.getElementById("app").classList.remove("cachee");
+  document.getElementById("user-info").textContent = "👤 " + (user.nom_complet || user.username);
+  if (typeof charger === "function") charger();
+}
+
 // ===== Connexion =====
 document.getElementById("form-connexion").addEventListener("submit", async function(ev) {
   ev.preventDefault();
-  console.log("🔵 Bouton connexion cliqué");
-
   const username = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value;
   const erreurEl = document.getElementById("login-erreur");
   erreurEl.textContent = "";
-
-  console.log("🔵 Envoi vers /api/auth avec username =", username);
 
   try {
     const r = await fetch("/api/auth", {
@@ -167,27 +172,13 @@ document.getElementById("form-connexion").addEventListener("submit", async funct
       body: JSON.stringify({ username, password })
     });
 
-    console.log("🔵 Réponse status =", r.status);
-
     const res = await r.json();
-    console.log("🔵 Réponse data =", res);
-
-    if (!r.ok) {
-      erreurEl.textContent = res.error || "Erreur de connexion";
-      return;
-    }
+    if (!r.ok) { erreurEl.textContent = res.error || "Erreur de connexion"; return; }
 
     setToken(res.token);
-    document.getElementById("ecran-connexion").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    document.getElementById("user-info").textContent = "👤 " + (res.user.nom_complet || res.user.username);
-    console.log("✅ Connecté !");
-
-    // Charger les données via admin.js
-    if (typeof charger === "function") charger();
+    afficherApp(res.user);
 
   } catch (err) {
-    console.error("❌ Erreur :", err);
     erreurEl.textContent = "Erreur réseau : " + err.message;
   }
 });
@@ -207,10 +198,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const res = await r.json();
     if (!res.valide) { supprimerToken(); return; }
 
-    document.getElementById("ecran-connexion").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    document.getElementById("user-info").textContent = "👤 " + (res.user.nom_complet || res.user.username);
-    if (typeof charger === "function") charger();
+    afficherApp(res.user);
 
   } catch (e) { /* ignore */ }
 });
