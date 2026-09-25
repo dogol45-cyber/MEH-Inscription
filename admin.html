@@ -12,6 +12,32 @@
 body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; color: #222; line-height: 1.6; }
 .cachee { display: none !important; }
 
+/* ============ ÉCRAN DE CHARGEMENT ============ */
+.ecran-chargement {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8B0000, #A50000);
+  color: white;
+  flex-direction: column;
+  gap: 20px;
+}
+.ecran-chargement img {
+  width: 100px; height: 100px; object-fit: contain;
+  border-radius: 50%; background: white; padding: 5px;
+}
+.ecran-chargement p { font-size: 1rem; opacity: 0.9; }
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ============ EN-TÊTE ============ */
 .hero {
   background: linear-gradient(135deg, #8B0000, #A50000);
@@ -226,8 +252,15 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
 </head>
 <body>
 
-<!-- ============ ÉCRAN DE CONNEXION ============ -->
-<div id="ecran-connexion" class="ecran-connexion">
+<!-- ============ ÉCRAN DE CHARGEMENT (visible par défaut) ============ -->
+<div id="ecran-chargement" class="ecran-chargement">
+  <img src="logo.png" alt="Logo MEH">
+  <div class="spinner"></div>
+  <p>Vérification en cours...</p>
+</div>
+
+<!-- ============ ÉCRAN DE CONNEXION (caché au départ) ============ -->
+<div id="ecran-connexion" class="ecran-connexion cachee">
   <div class="login-box">
     <img src="logo.png" class="logo" alt="Logo MEH">
     <h1>Administration MEH</h1>
@@ -247,7 +280,7 @@ td button { padding: 6px 10px; font-size: 1rem; margin: 2px; }
   </div>
 </div>
 
-<!-- ============ APPLICATION ============ -->
+<!-- ============ APPLICATION (cachée au départ) ============ -->
 <div id="app" class="cachee">
   <header class="hero">
     <img src="logo.png" class="logo" alt="Logo MEH">
@@ -347,19 +380,38 @@ function getToken() { return localStorage.getItem("meh_token"); }
 function setToken(t) { localStorage.setItem("meh_token", t); }
 function supprimerToken() { localStorage.removeItem("meh_token"); }
 
-function afficherApp(user) {
+// Cacher les 3 écrans
+function cacherTout() {
+  document.getElementById("ecran-chargement").classList.add("cachee");
   document.getElementById("ecran-connexion").classList.add("cachee");
+  document.getElementById("app").classList.add("cachee");
+}
+
+// Afficher l'écran de connexion
+function afficherConnexion() {
+  cacherTout();
+  document.getElementById("ecran-connexion").classList.remove("cachee");
+}
+
+// Afficher l'application
+function afficherApp(user) {
+  cacherTout();
   document.getElementById("app").classList.remove("cachee");
   document.getElementById("user-info").textContent = "👤 " + (user.nom_complet || user.username);
   if (typeof charger === "function") charger();
 }
 
+// ===== Connexion =====
 document.getElementById("form-connexion").addEventListener("submit", async function(ev) {
   ev.preventDefault();
   const username = document.getElementById("login-username").value.trim();
   const password = document.getElementById("login-password").value;
   const erreurEl = document.getElementById("login-erreur");
+  const btn = ev.target.querySelector("button");
   erreurEl.textContent = "";
+
+  btn.disabled = true;
+  btn.textContent = "⏳ Connexion...";
 
   try {
     const r = await fetch("/api/auth", {
@@ -368,31 +420,64 @@ document.getElementById("form-connexion").addEventListener("submit", async funct
       body: JSON.stringify({ username, password })
     });
     const res = await r.json();
-    if (!r.ok) { erreurEl.textContent = res.error || "Erreur"; return; }
+
+    if (!r.ok) {
+      erreurEl.textContent = res.error || "Erreur de connexion";
+      return;
+    }
+
     setToken(res.token);
     afficherApp(res.user);
+
   } catch (err) {
     erreurEl.textContent = "Erreur réseau : " + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🔐 Se connecter";
   }
 });
 
+// ===== Vérification au démarrage =====
 window.addEventListener("DOMContentLoaded", async () => {
   const token = getToken();
-  if (!token) return;
+
+  // Aucun token → afficher la connexion
+  if (!token) {
+    afficherConnexion();
+    return;
+  }
+
+  // Token présent → vérifier auprès du serveur
   try {
     const r = await fetch("/api/verifier", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
     });
-    if (!r.ok) { supprimerToken(); return; }
+
+    if (!r.ok) {
+      supprimerToken();
+      afficherConnexion();
+      return;
+    }
+
     const res = await r.json();
-    if (!res.valide) { supprimerToken(); return; }
+    if (!res.valide) {
+      supprimerToken();
+      afficherConnexion();
+      return;
+    }
+
+    // Token valide → afficher l'app directement
     afficherApp(res.user);
-  } catch (e) { /* ignore */ }
+
+  } catch (e) {
+    supprimerToken();
+    afficherConnexion();
+  }
 });
 </script>
 
-<script src="admin.js?v=12"></script>
+<script src="admin.js?v=13"></script>
 
 </body>
 </html>
