@@ -1,138 +1,57 @@
 // ================================
-// ADMINISTRATION MEH — avec authentification
+// ADMINISTRATION MEH — sans auto-chargement
+// (c'est admin.html qui gère la connexion)
 // ================================
 
 let toutesLesInscriptions = [];
-let tokenActuel = null;
 
 // ================================
-// GESTION DU TOKEN
+// HEADERS avec token
 // ================================
-function getToken() {
-  return localStorage.getItem("meh_token");
-}
-
-function setToken(token) {
-  localStorage.setItem("meh_token", token);
-  tokenActuel = token;
-}
-
-function supprimerToken() {
-  localStorage.removeItem("meh_token");
-  tokenActuel = null;
-}
-
 function authHeaders() {
+  const token = localStorage.getItem("meh_token") || "";
   return {
     "Content-Type": "application/json",
-    "Authorization": "Bearer " + (tokenActuel || "")
+    "Authorization": "Bearer " + token
   };
 }
 
 // ================================
-// CONNEXION
-// ================================
-async function connexion(ev) {
-  ev.preventDefault();
-
-  const username = document.getElementById("login-username").value.trim();
-  const password = document.getElementById("login-password").value;
-  const erreurEl = document.getElementById("login-erreur");
-  erreurEl.textContent = "";
-
-  try {
-    const r = await fetch("/api/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-
-    const res = await r.json();
-
-    if (!r.ok) {
-      erreurEl.textContent = res.error || "Erreur de connexion";
-      return;
-    }
-
-    setToken(res.token);
-    afficherApp(res.user);
-
-  } catch (err) {
-    erreurEl.textContent = "Erreur réseau : " + err.message;
-  }
-}
-
-function afficherApp(user) {
-  document.getElementById("ecran-connexion").style.display = "none";
-  document.getElementById("app").style.display = "block";
-  document.getElementById("user-info").textContent =
-    "👤 " + (user.nom_complet || user.username);
-  charger();
-}
-
-// ================================
-// DÉCONNEXION
+// DÉCONNEXION (appelée depuis admin.html)
 // ================================
 async function deconnexion() {
   if (!confirm("Voulez-vous vous déconnecter ?")) return;
 
+  const token = localStorage.getItem("meh_token");
+
   try {
     await fetch("/api/deconnexion", {
       method: "POST",
-      headers: authHeaders()
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      }
     });
   } catch (e) { /* ignore */ }
 
-  supprimerToken();
+  localStorage.removeItem("meh_token");
   location.reload();
 }
 
 // ================================
-// VÉRIFICATION AU DÉMARRAGE
-// ================================
-async function verifierAuth() {
-  const token = getToken();
-  if (!token) return false;
-
-  tokenActuel = token;
-
-  try {
-    const r = await fetch("/api/verifier", {
-      method: "POST",
-      headers: authHeaders()
-    });
-
-    if (!r.ok) {
-      supprimerToken();
-      return false;
-    }
-
-    const res = await r.json();
-    if (res.valide) {
-      afficherApp(res.user);
-      return true;
-    }
-
-    supprimerToken();
-    return false;
-
-  } catch (err) {
-    return false;
-  }
-}
-
-// ================================
-// CHARGEMENT (READ)
+// CHARGEMENT DE LA LISTE (READ)
 // ================================
 async function charger() {
   const tbody = document.querySelector("tbody");
+  if (!tbody) return;
+
   tbody.innerHTML = `<tr><td colspan="7">Chargement...</td></tr>`;
 
   try {
     const r = await fetch("/api/liste", { headers: authHeaders() });
 
     if (r.status === 401) {
-      supprimerToken();
+      localStorage.removeItem("meh_token");
       location.reload();
       return;
     }
@@ -154,6 +73,7 @@ async function charger() {
 // ================================
 function afficher(liste) {
   const tbody = document.querySelector("tbody");
+  if (!tbody) return;
 
   if (liste.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7">Aucune inscription.</td></tr>`;
@@ -185,30 +105,21 @@ function afficher(liste) {
 }
 
 // ================================
-// BARRE DE RECHERCHE
+// RECHERCHE
 // ================================
-document.addEventListener("DOMContentLoaded", () => {
-  const recherche = document.getElementById("recherche");
-  if (recherche) {
-    recherche.addEventListener("input", (ev) => {
-      const q = ev.target.value.toLowerCase().trim();
-      if (!q) { afficher(toutesLesInscriptions); return; }
+document.addEventListener("input", (ev) => {
+  if (ev.target.id !== "recherche") return;
+  const q = ev.target.value.toLowerCase().trim();
+  if (!q) { afficher(toutesLesInscriptions); return; }
 
-      const filtre = toutesLesInscriptions.filter(e => {
-        return (
-          (e.nom || "").toLowerCase().includes(q) ||
-          (e.prenom || "").toLowerCase().includes(q) ||
-          (e.numero || "").toLowerCase().includes(q) ||
-          (e.telephone || "").toLowerCase().includes(q) ||
-          (e.option_formation || "").toLowerCase().includes(q)
-        );
-      });
-      afficher(filtre);
-    });
-  }
-
-  // Vérifier auth au démarrage
-  verifierAuth();
+  const filtre = toutesLesInscriptions.filter(e =>
+    (e.nom || "").toLowerCase().includes(q) ||
+    (e.prenom || "").toLowerCase().includes(q) ||
+    (e.numero || "").toLowerCase().includes(q) ||
+    (e.telephone || "").toLowerCase().includes(q) ||
+    (e.option_formation || "").toLowerCase().includes(q)
+  );
+  afficher(filtre);
 });
 
 // ================================
@@ -286,7 +197,7 @@ async function sauvegarderModif(ev) {
 // SUPPRIMER (DELETE)
 // ================================
 async function supprimer(id, nom) {
-  const ok = confirm(`⚠️ Supprimer définitivement l'inscription de "${nom}" ?\n\nCette action est irréversible.`);
+  const ok = confirm(`⚠️ Supprimer définitivement l'inscription de "${nom}" ?`);
   if (!ok) return;
 
   try {
@@ -308,13 +219,12 @@ async function supprimer(id, nom) {
 }
 
 // ================================
-// PDF COMPLET — photo en haut à droite
+// PDF — photo en haut à droite
 // ================================
 async function pdf(jsonSafe) {
   const e = JSON.parse(decodeURIComponent(jsonSafe));
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
   const ROUGE = [139, 0, 0];
 
   doc.setFillColor(...ROUGE);
@@ -339,9 +249,7 @@ async function pdf(jsonSafe) {
   doc.setFontSize(12);
   doc.text("N° " + (e.numero || ""), 105, 60, { align: "center" });
 
-  const PHOTO_X = 148;
-  const PHOTO_W = 48;
-  const PHOTO_Y = 76;
+  const PHOTO_X = 148, PHOTO_W = 48, PHOTO_Y = 76;
 
   let y = 78;
   doc.setTextColor(...ROUGE);
@@ -385,32 +293,18 @@ async function pdf(jsonSafe) {
     try {
       const dims = await getImageDimensions(e.photo_piece);
       const format = e.photo_piece.includes("png") ? "PNG" : "JPEG";
-
-      let w = PHOTO_W;
-      let h = PHOTO_ZONE_H;
-
+      let w = PHOTO_W, h = PHOTO_ZONE_H;
       if (dims && dims.w && dims.h) {
         const ratio = dims.w / dims.h;
-        if (PHOTO_W / PHOTO_ZONE_H > ratio) {
-          h = PHOTO_ZONE_H;
-          w = PHOTO_ZONE_H * ratio;
-        } else {
-          w = PHOTO_W;
-          h = PHOTO_W / ratio;
-        }
+        if (PHOTO_W / PHOTO_ZONE_H > ratio) { h = PHOTO_ZONE_H; w = PHOTO_ZONE_H * ratio; }
+        else { w = PHOTO_W; h = PHOTO_W / ratio; }
       }
-
       const photoX = PHOTO_X + (PHOTO_W - w) / 2;
-
       doc.setDrawColor(...ROUGE);
       doc.setLineWidth(0.6);
       doc.rect(photoX - 1.5, PHOTO_Y - 1.5, w + 3, h + 3);
-
       doc.addImage(e.photo_piece, format, photoX, PHOTO_Y, w, h);
-
-    } catch (err) {
-      console.warn("Photo non ajoutée :", err);
-    }
+    } catch (err) { console.warn("Photo non ajoutée :", err); }
   } else {
     doc.setDrawColor(180);
     doc.setLineWidth(0.3);
