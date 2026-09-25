@@ -141,11 +141,11 @@ function ouvrirModal(jsonSafe) {
   document.getElementById("edit-parent").value = e.parent || "";
   document.getElementById("edit-tel-parent").value = e.tel_parent || "";
 
-  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal").classList.add("visible");
 }
 
 function fermerModal() {
-  document.getElementById("modal").style.display = "none";
+  document.getElementById("modal").classList.remove("visible");
 }
 
 window.addEventListener("click", (ev) => {
