@@ -1,9 +1,12 @@
-export async function onRequestGet({env}){
+import { verifierSession, nonAutorise } from "../_utils/auth.js";
 
-const {results}=await env.DB.prepare(
-"SELECT * FROM inscriptions ORDER BY id DESC"
-).all();
+export async function onRequestGet({ request, env }) {
+  const session = await verifierSession(request, env);
+  if (!session) return nonAutorise();
 
-return Response.json(results);
+  const { results } = await env.DB.prepare(
+    "SELECT * FROM inscriptions ORDER BY id DESC"
+  ).all();
 
+  return Response.json(results);
 }
