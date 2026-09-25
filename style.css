@@ -643,3 +643,108 @@ tr:hover td {
         margin-top: 5px;
     }
 }
+
+/* ================================
+   STATISTIQUES ADMIN
+   ================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #8B0000, #A50000);
+  color: white;
+  padding: 20px 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+.stats-options {
+  margin-top: 25px;
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.stats-options h3 {
+  color: #8B0000;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 8px;
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+
+.stat-bar-container {
+  margin-bottom: 12px;
+}
+
+.stat-bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.stat-bar {
+  height: 22px;
+  background: #eee;
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8B0000, #c62828);
+  color: white;
+  padding: 0 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  border-radius: 11px;
+  transition: width 0.5s ease;
+  min-width: 30px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  .stat-icon {
+    font-size: 1.5rem;
+  }
+}
