@@ -1,6 +1,10 @@
-// API : modification d'une inscription
+import { verifierSession, nonAutorise } from "../_utils/auth.js";
+
 export async function onRequestPost({ request, env }) {
   try {
+    const session = await verifierSession(request, env);
+    if (!session) return nonAutorise();
+
     const data = await request.json();
     const { id } = data;
 
@@ -10,17 +14,9 @@ export async function onRequestPost({ request, env }) {
 
     await env.DB.prepare(`
       UPDATE inscriptions SET
-        nom = ?,
-        prenom = ?,
-        sexe = ?,
-        naissance = ?,
-        lieu = ?,
-        adresse = ?,
-        telephone = ?,
-        email = ?,
-        parent = ?,
-        tel_parent = ?,
-        option_formation = ?
+        nom = ?, prenom = ?, sexe = ?, naissance = ?, lieu = ?,
+        adresse = ?, telephone = ?, email = ?, parent = ?,
+        tel_parent = ?, option_formation = ?
       WHERE id = ?
     `).bind(
       data.nom || "",
@@ -40,9 +36,6 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ success: true, message: "Inscription modifiée" });
 
   } catch (err) {
-    return Response.json(
-      { error: err.message || "Erreur serveur" },
-      { status: 500 }
-    );
+    return Response.json({ error: err.message }, { status: 500 });
   }
 }
